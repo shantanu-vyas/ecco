@@ -12,6 +12,7 @@ find_package(GLEW REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLM REQUIRED glm)
 pkg_check_modules(GLFW REQUIRED glfw3)
+# pkg_check_modules(FREEGLUT REQUIRED freeglut)
 
 # Include directories
 include_directories(
@@ -19,12 +20,42 @@ include_directories(
     ${GLEW_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIRS}
     ${GLFW_INCLUDE_DIRS}
+    # ${FREEGLUT_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/lib
 )
 
-# Collect all header and source files
-file(GLOB_RECURSE HEADERS "lib/**/*.hpp")
-file(GLOB_RECURSE SOURCES "lib/**/*.set")
+# Manually specify source and header files
+set(HEADERS
+    ./assetLoaders/ImageLoader.hpp
+    ./assetLoaders/ModelLoader.hpp
+    ./assetLoaders/ObjLoader.hpp
+    ./assetLoaders/STLLoader.hpp
+    ./glWrappers/FrameBuffer.hpp
+    ./glWrappers/FrameBufferManager.hpp
+    ./glWrappers/Texture.hpp
+    ./glWrappers/TextureManager.hpp
+    ./glWrappers/VAOModel.hpp
+    ./pipeline/BasePipline.hpp
+    ./pipeline/DefferedGeometry.hpp
+    ./pipeline/DefferedLighting.hpp
+    ./pipeline/FinalComposition.hpp
+    ./pipeline/ForwardRendering.hpp
+    ./pipeline/PostProcessing.hpp
+    ./sceneModel/Camera.hpp
+    ./sceneModel/Model.hpp
+    ./sceneModel/ModelManager.hpp
+    ./sceneModel/SceneGraph.hpp
+    ./sceneModel/SceneNode.hpp
+    ./shaderManager/Shader.hpp
+    ./shaderManager/ShaderProgram.hpp
+    ./shaderManager/ShaderProgramManager.hpp
+)
+
+set(SOURCES
+    ./pullIn.cpp
+    ./sceneModel/SceneNode.cpp
+    ./sceneModel/SceneGraph.cpp
+)
 
 # Set build directory
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/../build")
@@ -38,14 +69,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
 # Create library target
 add_library(RenderingEngine STATIC ${SOURCES} ${HEADERS})
 
-
-
 # Link libraries
 target_link_libraries(RenderingEngine
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARIES}
     ${GLM_LIBRARIES}
     ${GLFW_LIBRARIES}
+    # ${FREEGLUT_LIBRARIES}
 )
 
 # Output message

@@ -13,6 +13,6 @@ namespace ecco
             private:
                 // std::vector<vao info?>
 
-        }
+        };
     }
 }

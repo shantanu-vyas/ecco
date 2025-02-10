@@ -1,5 +1,9 @@
-#include <glm.hpp>
-#include <memory.hpp>
+#ifndef SCENENODE_HPP
+#define SCENENODE_HPP
+
+#include <glm/glm.hpp>
+#include <vector>
+#include <memory>
 #include <string>
 
 /*
@@ -14,12 +18,13 @@ namespace ecco
 {
     namespace SceneGraph
     {
+        class SceneGraph;
         class SceneNode
         {
             public:
-                SceneNode(std::string name) explicit;
+                explicit SceneNode(std::string name);
                 SceneNode() = delete;
-                SceneNode(SceneNode) = delete;
+                SceneNode(SceneNode&) = delete;
                 ~SceneNode();
 
                 /* needs to add node to this as a child and update master ref list in scene graph */
@@ -40,8 +45,10 @@ namespace ecco
                 glm::mat4 m_nodeTparentTransform();
                 const std::shared_ptr<SceneNode> m_parentNode;
                 const std::shared_ptr<SceneNode> m_rootNode;
-                const std::shared_ptr<SceneGraph> m_sceneGraph;
-                std::vector<const std::shared_ptr<SceneNode>> m_children;
-        }
+                const std::shared_ptr<ecco::SceneGraph::SceneGraph> m_sceneGraph;
+                //this cant be const in a vector?
+                std::vector<std::shared_ptr<const SceneNode>> m_children;
+        };
     }
 }
+#endif //SCENENODE_HPP
