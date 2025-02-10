@@ -3,7 +3,9 @@
 using ecco::SceneGraph::SceneGraph;
 using ecco::SceneGraph::SceneNode;;
 
-SceneGraph::SceneGraph(std::string name) {
+SceneGraph::SceneGraph(std::string name)
+: EccoObject(name)
+{
 
 }
 SceneGraph::~SceneGraph() { }

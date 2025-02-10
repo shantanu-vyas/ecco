@@ -2,7 +2,7 @@
 #define VAOMODEL_HPP
 
 #include <GL/gl.h>
-#include "../ecco/EccoObject.hpp";
+#include "../ecco/EccoObject.hpp"
 #include "../sceneModel/Model.hpp"
 #include <memory>
 

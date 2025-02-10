@@ -49,6 +49,8 @@ set(HEADERS
     ./shaderManager/Shader.hpp
     ./shaderManager/ShaderProgram.hpp
     ./shaderManager/ShaderProgramManager.hpp
+    ./ecco/EccoObject.hpp
+    ./ecco/EccoOutcome.hpp
 )
 
 set(SOURCES

@@ -1,11 +1,9 @@
 #include "SceneNode.hpp"
 
-
 using ecco::SceneGraph::SceneNode;
 
-
-ecco::SceneGraph::SceneNode(std::string name) :
-
+SceneNode::SceneNode(std::string name)
+: EccoObject(name)
 {
 
 }

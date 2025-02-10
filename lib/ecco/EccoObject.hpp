@@ -15,28 +15,26 @@ static boost::uuids::uuid generateUuid()
   return gen();
 }
 
-
 namespace ecco
 {
-    namespace ecco
+    class EccoObject
     {
-        class EccoObject
-        {
+        public:
+            explicit EccoObject(std::string);
             EccoObject() = delete;
             EccoObject(EccoObject&) = delete;
-            EccoObject(std::string);
             ~EccoObject();
             std::string GetName();
             std::string GetUUID();
 
-            private:
+        private:
             boost::uuids::uuid m_uuid;
             std::string m_name;
             static std::map<boost::uuids::uuid, EccoObject> m_allObjects; //store all objects in here?
 
         };
-    }
 }
+
 
 
 #endif
