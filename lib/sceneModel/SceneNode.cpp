@@ -4,7 +4,9 @@
 using ecco::SceneGraph::SceneNode;
 
 
-ecco::SceneGraph::SceneNode::SceneNode(std::string name) {
+ecco::SceneGraph::SceneNode(std::string name) :
+
+{
 
 }
 

@@ -14,7 +14,7 @@
 // #include "pipeline/ForwardRendering.hpp"
 // #include "pipeline/PostProcessing.hpp"
 // #include "sceneModel/Camera.hpp"
-// #include "sceneModel/Model.hpp"
+#include "sceneModel/Model.hpp"
 // #include "sceneModel/ModelManager.hpp"
 #include "sceneModel/SceneGraph.hpp"
 #include "sceneModel/SceneNode.hpp"

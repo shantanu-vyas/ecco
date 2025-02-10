@@ -1,6 +1,7 @@
 #ifndef SCENENODE_HPP
 #define SCENENODE_HPP
 
+#include "../ecco/EccoObject.hpp"
 #include <glm/glm.hpp>
 #include <vector>
 #include <memory>
@@ -19,7 +20,7 @@ namespace ecco
     namespace SceneGraph
     {
         class SceneGraph;
-        class SceneNode
+        class SceneNode : ecco::EccoObject
         {
             public:
                 explicit SceneNode(std::string name);
@@ -41,11 +42,12 @@ namespace ecco
                 glm::mat4 GetNodeTParentTransform() const;
                 std::tuple<bool, glm::mat4> GetNodeTAncestorTransform(const std::shared_ptr<SceneNode> child) const; //if it exists, value this could be replaced with an outcome
 
+
             private:
                 glm::mat4 m_nodeTparentTransform();
                 const std::shared_ptr<SceneNode> m_parentNode;
                 const std::shared_ptr<SceneNode> m_rootNode;
-                const std::shared_ptr<ecco::SceneGraph::SceneGraph> m_sceneGraph;
+                const std::shared_ptr<SceneGraph> m_sceneGraph;
                 //this cant be const in a vector?
                 std::vector<std::shared_ptr<const SceneNode>> m_children;
         };
