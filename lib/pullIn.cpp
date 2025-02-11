@@ -20,6 +20,10 @@
 #include "sceneModel/SceneNode.hpp"
 #include "ecco/EccoObject.hpp"
 #include "ecco/EccoOutcome.hpp"
+#include "ecco/EccoManager.hpp"
+#include "ecco/EccoProduct.hpp"
+#include "glWrappers/FrameBuffer.hpp"
+#include "glWrappers/FrameBufferManager.hpp"
 // #include "shaderManager/Shader.hpp"
 // #include "shaderManager/ShaderProgram.hpp"
 // #include "shaderManager/ShaderProgramManager.hpp"
@@ -29,4 +33,14 @@ void func()
 {
     ecco::SceneGraph::SceneNode node("");
     ecco::SceneGraph::SceneGraph graph("");
+    std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
+
+    //Doesnt work
+    // ecco::OpenGL::FrameBuffer m("",1,1);
+
+    //dont do this
+    auto m_fboManager = ecco::EccoManager<ecco::OpenGL::FrameBuffer>::GetInstance();
+    // m_fboManager->CreateProduct("my fbo", 10,10,20);
+
+    auto m_fboManager1 = ecco::OpenGL::FrameBufferManager::GetInstance();
 }

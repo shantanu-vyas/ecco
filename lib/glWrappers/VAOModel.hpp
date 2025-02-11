@@ -2,7 +2,7 @@
 #define VAOMODEL_HPP
 
 #include <GL/gl.h>
-#include "../ecco/EccoObject.hpp"
+#include "../ecco/EccoProduct.hpp"
 #include "../sceneModel/Model.hpp"
 #include <memory>
 
@@ -17,13 +17,14 @@ namespace ecco
 {
     namespace OpenGL
     {
-        class VAOModel : ecco::EccoObject
+        class VAOModel : public ecco::EccoProduct
         {
             public:
-                explicit VAOModel(const std::shared_ptr<Model::Model> model);
-                VAOModel() = delete;
-                VAOModel(VAOModel&) = delete;
-                ~VAOModel();
+                // explicit VAOModel(const std::shared_ptr<Model::Model> model);
+                // VAOModel() = delete;
+                // VAOModel(VAOModel&) = delete;
+                // ~VAOModel();
+
 
                 void RecreateVAO(std::shared_ptr<Model::Model> model);
                 void LinkTexture(); //Texture object isnt created yet

@@ -57,6 +57,8 @@ set(SOURCES
     ./pullIn.cpp
     ./sceneModel/SceneNode.cpp
     ./sceneModel/SceneGraph.cpp
+    ./ecco/EccoManager.cpp
+    ./glWrappers/FrameBufferManager.cpp
 )
 
 # Set build directory
