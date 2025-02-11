@@ -42,5 +42,11 @@ void func()
     auto m_fboManager = ecco::EccoManager<ecco::OpenGL::FrameBuffer>::GetInstance();
     // m_fboManager->CreateProduct("my fbo", 10,10,20);
 
-    auto m_fboManager1 = ecco::OpenGL::FrameBufferManager::GetInstance();
+
+    ecco::OpenGL::FrameBufferManager m_fboManager1 = ecco::OpenGL::FrameBufferManager::GetInstance();
+
+
+    //fucking the template is pulling the function for the base class and not the specific
+    //do i have to rewrite this for each impl?
+
 }

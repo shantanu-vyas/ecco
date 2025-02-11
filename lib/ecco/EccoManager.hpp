@@ -29,8 +29,8 @@ namespace ecco
 
         static std::shared_ptr<EccoManager<T>> GetInstance();
 
-        template<typename... Args>
-        std::shared_ptr<T> CreateProduct(Args&&... args) = delete;
+        // template<typename... Args>
+        // std::shared_ptr<T> CreateProduct(Args&&... args) = delete;
         void DeleteProduct(const std::shared_ptr<T>& obj);
 
     protected:

@@ -3,8 +3,8 @@
 #include <type_traits>
 
 //if i put these here and dont inline them im getting "insantation of variable with no definintion" in the FBO manager class even though i am instantiating them here?
-// template<> std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> ecco::EccoManager<ecco::EccoProduct>::m_singleton = nullptr;
-// template<> std::mutex ecco::EccoManager<ecco::EccoProduct>::m_lock;
+template<> std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> ecco::EccoManager<ecco::EccoProduct>::m_singleton = nullptr;
+template<> std::mutex ecco::EccoManager<ecco::EccoProduct>::m_lock;
 
 template <>
 std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> ecco::EccoManager<ecco::EccoProduct>::GetInstance() {
@@ -17,6 +17,18 @@ std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> ecco::EccoManager<ecco::Ec
   }
   return m_singleton;
 }
+
+template<>
+void ecco::EccoManager<ecco::EccoProduct>::DeleteProduct(const std::shared_ptr<ecco::EccoProduct> &obj) {
+  std::lock_guard<std::mutex> lock(m_lock);
+  m_products.erase(std::remove(m_products.begin(), m_products.end(), obj),
+                   m_products.end());
+}
+
+
+
+
+
 
 //this is bad and not strongly typed
 // template<>
@@ -31,11 +43,3 @@ std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> ecco::EccoManager<ecco::Ec
 //   m_products.emplace_back(product);
 //   return product;
 // }
-
-template<>
-void ecco::EccoManager<ecco::EccoProduct>::DeleteProduct(const std::shared_ptr<ecco::EccoProduct> &obj) {
-  std::lock_guard<std::mutex> lock(m_lock);
-  m_products.erase(std::remove(m_products.begin(), m_products.end(), obj),
-                   m_products.end());
-}
-
