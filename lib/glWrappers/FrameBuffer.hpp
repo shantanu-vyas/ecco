@@ -3,6 +3,7 @@
 
 #include "../ecco/EccoProduct.hpp"
 #include "../ecco/EccoManager.hpp"
+#include "Attachment.hpp"
 
 namespace ecco
 {
@@ -14,6 +15,14 @@ namespace ecco
             public:
                 static std::string GetName() {return "FRAMEBUFFER";};
             //weird, if this constructor is public it can still be called even though its parent constructor is protected?
+
+            //Debug functions
+            void DebugFBO();
+            void SaveFBOAsImage(std::string tag);
+            void SaveFBOAttachmentAsImage(std::string tag, std::shared_ptr<ecco::OpenGL::Attachment> attachment);
+            void SaveFBOAllAttachmentsAsImage(std::string tag);
+
+
             protected:
 
                 explicit FrameBuffer(std::string name, int width, int height) :
