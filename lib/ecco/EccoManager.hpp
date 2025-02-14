@@ -34,7 +34,7 @@ namespace ecco
         void DeleteProduct(const std::shared_ptr<T>& obj);
 
     protected:
-        EccoManager() : EccoObject("FBO MANAGER") {};
+        EccoManager();// : EccoObject("") {}; //this parameters hould actually be T->GetName()
         static inline std::shared_ptr<EccoManager<T>> m_singleton;
         static inline std::mutex m_lock;
         std::vector<std::shared_ptr<T>> m_products;

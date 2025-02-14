@@ -24,7 +24,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/lib
 )
 
-# Manually specify source and header files
+# Manually specify header files (for IDE indexing)
 set(HEADERS
     ./assetLoaders/ImageLoader.hpp
     ./assetLoaders/ModelLoader.hpp
@@ -53,8 +53,9 @@ set(HEADERS
     ./ecco/EccoOutcome.hpp
 )
 
+# Define source files for the static library
 set(SOURCES
-    ./pullIn.cpp
+    ./ecco/EccoObject.cpp
     ./sceneModel/SceneNode.cpp
     ./sceneModel/SceneGraph.cpp
     ./ecco/EccoManager.cpp
@@ -62,18 +63,18 @@ set(SOURCES
 )
 
 # Set build directory
-set(BUILD_DIR "${CMAKE_SOURCE_DIR}/../build")
-if (NOT EXISTS ${BUILD_DIR})
-    file(MAKE_DIRECTORY ${BUILD_DIR})
-endif()
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BUILD_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BUILD_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
+# set(BUILD_DIR "${CMAKE_SOURCE_DIR}/../build")
+# if (NOT EXISTS ${BUILD_DIR})
+#     file(MAKE_DIRECTORY ${BUILD_DIR})
+# endif()
+# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BUILD_DIR})
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BUILD_DIR})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
 
-# Create library target
-add_library(RenderingEngine STATIC ${SOURCES} ${HEADERS})
+# Create static library target
+add_library(RenderingEngine STATIC ${SOURCES})
 
-# Link libraries
+# Link libraries to the static library
 target_link_libraries(RenderingEngine
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARIES}
@@ -81,6 +82,12 @@ target_link_libraries(RenderingEngine
     ${GLFW_LIBRARIES}
     # ${FREEGLUT_LIBRARIES}
 )
+
+# Define the executable for pullIn.cpp
+add_executable(test ./pullIn.cpp)
+
+# Link the executable with the static library
+target_link_libraries(test RenderingEngine)
 
 # Output message
 message(STATUS "CMake configured successfully!")

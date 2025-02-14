@@ -6,6 +6,15 @@
 template<> std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> ecco::EccoManager<ecco::EccoProduct>::m_singleton = nullptr;
 template<> std::mutex ecco::EccoManager<ecco::EccoProduct>::m_lock;
 
+//construct EccoManager on EccoProduct::GetName()
+#include <iostream>
+template <>
+ecco::EccoManager<ecco::EccoProduct>::EccoManager() :
+  ecco::EccoObject(ecco::EccoProduct::GetName() + "-Manager")
+{
+
+}
+
 template <>
 std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> ecco::EccoManager<ecco::EccoProduct>::GetInstance() {
   if (!m_singleton) {
@@ -24,7 +33,6 @@ void ecco::EccoManager<ecco::EccoProduct>::DeleteProduct(const std::shared_ptr<e
   m_products.erase(std::remove(m_products.begin(), m_products.end(), obj),
                    m_products.end());
 }
-
 
 
 

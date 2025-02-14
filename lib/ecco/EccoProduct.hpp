@@ -16,6 +16,8 @@ namespace ecco
             virtual void initialize() {};
             virtual void deinitalize() {};
 
+            static std::string GetName() { return "ECCO PRODUCT"; };
+
         protected:
             explicit EccoProduct(std::string name) : EccoObject(name) {};
     };

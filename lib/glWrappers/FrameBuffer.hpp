@@ -11,7 +11,8 @@ namespace ecco
     {
         class FrameBuffer : public EccoProduct
         {
-
+            public:
+                static std::string GetName() {return "FRAMEBUFFER";};
             //weird, if this constructor is public it can still be called even though its parent constructor is protected?
             protected:
 
@@ -19,6 +20,13 @@ namespace ecco
                     EccoProduct("FBO-" + name),
                     m_width(width),
                     m_height(height) {}
+
+                void DeleteFrameBuffer();
+                void ReinitializeFrameBuffer();
+                void AddAttachment(int);
+                void DeleteAttachment(int);
+                //this needs to be attachments
+                std::vector<int> m_attachments;
 
             private:
                 int m_width;

@@ -1,3 +1,4 @@
+#include <iostream>
 // #include "assetLoaders/ImageLoader.hpp"
 // #include "assetLoaders/ModelLoader.hpp"
 // #include "assetLoaders/ObjLoader.hpp"
@@ -29,10 +30,10 @@
 // #include "shaderManager/ShaderProgramManager.hpp"
 
 
-void func()
+int main()
 {
-    ecco::SceneGraph::SceneNode node("");
-    ecco::SceneGraph::SceneGraph graph("");
+    // ecco::SceneGraph::SceneNode node("");
+    // ecco::SceneGraph::SceneGraph graph("");
     std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
 
     //Doesnt work
@@ -43,7 +44,9 @@ void func()
     // m_fboManager->CreateProduct("my fbo", 10,10,20);
 
 
-    ecco::OpenGL::FrameBufferManager m_fboManager1 = ecco::OpenGL::FrameBufferManager::GetInstance();
+    std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager1 = ecco::OpenGL::FrameBufferManager::GetInstance();
+    //not using auto here to confirm the type is correct
+    std::shared_ptr<ecco::OpenGL::FrameBuffer> fboTest = m_fboManager1->CreateProduct("asdf", 1,1);
 
 
     //fucking the template is pulling the function for the base class and not the specific

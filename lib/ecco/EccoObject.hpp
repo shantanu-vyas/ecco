@@ -24,7 +24,7 @@ namespace ecco
             EccoObject() = delete;
             EccoObject(EccoObject&) = delete;
             ~EccoObject();
-            std::string GetName();
+            static std::string GetName() {return "ECCO OBJECT";};
             std::string GetUUID();
 
         private:
