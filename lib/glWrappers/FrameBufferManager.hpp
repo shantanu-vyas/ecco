@@ -9,10 +9,10 @@ namespace ecco
     template <>
     class EccoManager<ecco::OpenGL::FrameBuffer> : public EccoManager<ecco::EccoProduct> {
         public:
-            std::shared_ptr<ecco::OpenGL::FrameBuffer>
+            [[nodiscard]] std::shared_ptr<ecco::OpenGL::FrameBuffer>
             CreateProduct(const std::string &name, int width, int height);
 
-            static std::shared_ptr<EccoManager<ecco::OpenGL::FrameBuffer>> GetInstance();
+            [[nodiscard]] static std::shared_ptr<EccoManager<ecco::OpenGL::FrameBuffer>> GetInstance();
     };
 }
 

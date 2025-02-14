@@ -19,10 +19,6 @@ std::shared_ptr<ecco::EccoManager<ecco::OpenGL::FrameBuffer>> ecco::EccoManager<
 }
 
 
-
-
-
-
 // std::shared_ptr<ecco::OpenGL::FrameBuffer> ecco::EccoManager<ecco::OpenGL::FrameBuffer>::CreateProduct(const std::string& name, int width, int height) {
 //use our nice cool new alias instead of ecco::EccoManager
 std::shared_ptr<ecco::OpenGL::FrameBuffer> ecco::OpenGL::FrameBufferManager::CreateProduct(const std::string& name, int width, int height) {

@@ -1,5 +1,6 @@
 #include "EccoManager.hpp"
 #include "EccoProduct.hpp"
+#include <memory>
 #include <type_traits>
 
 //if i put these here and dont inline them im getting "insantation of variable with no definintion" in the FBO manager class even though i am instantiating them here?
@@ -25,6 +26,12 @@ std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> ecco::EccoManager<ecco::Ec
     }
   }
   return m_singleton;
+}
+
+//why can i return std:;shared_ptr but not std::make_shared
+template<>
+std::shared_ptr<ecco::EccoProduct> ecco::EccoManager<ecco::EccoProduct>::CreateProduct() {
+  return std::shared_ptr<ecco::EccoProduct>(new ecco::EccoProduct("BASE"));
 }
 
 template<>

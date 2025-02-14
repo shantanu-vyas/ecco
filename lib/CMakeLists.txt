@@ -32,6 +32,8 @@ set(HEADERS
     ./assetLoaders/STLLoader.hpp
     ./glWrappers/FrameBuffer.hpp
     ./glWrappers/FrameBufferManager.hpp
+    ./glWrappers/Attachment.hpp
+    ./glWrappers/AttachmentManager.hpp
     ./glWrappers/Texture.hpp
     ./glWrappers/TextureManager.hpp
     ./glWrappers/VAOModel.hpp
@@ -60,6 +62,7 @@ set(SOURCES
     ./sceneModel/SceneGraph.cpp
     ./ecco/EccoManager.cpp
     ./glWrappers/FrameBufferManager.cpp
+    ./glWrappers/AttachmentManager.cpp
 )
 
 # Set build directory

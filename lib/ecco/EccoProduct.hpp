@@ -2,6 +2,7 @@
 #define ECCOPRODUCT_HPP
 
 #include "EccoObject.hpp"
+#include "../ecco/EccoManager.hpp"
 
 namespace ecco
 {
@@ -20,6 +21,11 @@ namespace ecco
 
         protected:
             explicit EccoProduct(std::string name) : EccoObject(name) {};
+
+        private:
+
+            friend class EccoManager<EccoProduct>;
+
     };
 }
 

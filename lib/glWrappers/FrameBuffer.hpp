@@ -26,11 +26,14 @@ namespace ecco
                 void AddAttachment(int);
                 void DeleteAttachment(int);
                 //this needs to be attachments
-                std::vector<int> m_attachments;
+
 
             private:
                 int m_width;
                 int m_height;
+                std::vector<int> m_attachments;
+                //what if we also include attachment sets for pingponging
+                //std:map<id, std::vector<m_attachments>
 
                 friend class EccoManager<FrameBuffer>; //Allows EccoManager<FrameBuffer> to call the protected funcs ie the Constructor
 

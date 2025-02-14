@@ -1,3 +1,4 @@
+
 #include <iostream>
 // #include "assetLoaders/ImageLoader.hpp"
 // #include "assetLoaders/ModelLoader.hpp"
@@ -25,31 +26,26 @@
 #include "ecco/EccoProduct.hpp"
 #include "glWrappers/FrameBuffer.hpp"
 #include "glWrappers/FrameBufferManager.hpp"
+#include "glWrappers/AttachmentManager.hpp"
 // #include "shaderManager/Shader.hpp"
 // #include "shaderManager/ShaderProgram.hpp"
 // #include "shaderManager/ShaderProgramManager.hpp"
 
+std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager;
+std::shared_ptr<ecco::OpenGL::AttachmentManager> m_attachmentManager;
 
 int main()
 {
-    // ecco::SceneGraph::SceneNode node("");
-    // ecco::SceneGraph::SceneGraph graph("");
-    std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
+    // std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
 
-    //Doesnt work
-    // ecco::OpenGL::FrameBuffer m("",1,1);
-
-    //dont do this
-    auto m_fboManager = ecco::EccoManager<ecco::OpenGL::FrameBuffer>::GetInstance();
-    // m_fboManager->CreateProduct("my fbo", 10,10,20);
-
-
-    std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager1 = ecco::OpenGL::FrameBufferManager::GetInstance();
+    m_fboManager = ecco::OpenGL::FrameBufferManager::GetInstance();
+    m_attachmentManager = ecco::OpenGL::AttachmentManager::GetInstance();
     //not using auto here to confirm the type is correct
-    std::shared_ptr<ecco::OpenGL::FrameBuffer> fboTest = m_fboManager1->CreateProduct("asdf", 1,1);
+    std::shared_ptr<ecco::OpenGL::FrameBuffer> fbo = m_fboManager->CreateProduct("asdf", 1,1);
+    std::shared_ptr<ecco::OpenGL::Attachment> attachment = m_attachmentManager->CreateProduct("asdfasdf", 1,1);
 
+    std::cout << fbo->GetName() << std::endl;
+    std::cout << attachment->GetName() << std::endl;
 
-    //fucking the template is pulling the function for the base class and not the specific
-    //do i have to rewrite this for each impl?
 
 }

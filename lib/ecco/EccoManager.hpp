@@ -27,7 +27,9 @@ namespace ecco
         ~EccoManager() = default;
         EccoManager& operator=(const EccoManager&) = delete;
 
-        static std::shared_ptr<EccoManager<T>> GetInstance();
+        [[nodiscard]] static std::shared_ptr<EccoManager<T>> GetInstance();
+
+        [[nodiscard]] virtual std::shared_ptr<T> CreateProduct();
 
         // template<typename... Args>
         // std::shared_ptr<T> CreateProduct(Args&&... args) = delete;
