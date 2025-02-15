@@ -53,6 +53,7 @@ set(HEADERS
     ./shaderManager/ShaderProgramManager.hpp
     ./ecco/EccoObject.hpp
     ./ecco/EccoOutcome.hpp
+    ./appdelegate/AppDelegate.hpp
 )
 
 # Define source files for the static library
@@ -63,6 +64,7 @@ set(SOURCES
     ./ecco/EccoManager.cpp
     ./glWrappers/FrameBufferManager.cpp
     ./glWrappers/AttachmentManager.cpp
+    ./appdelegate/AppDelegate.cpp
 )
 
 # Set build directory

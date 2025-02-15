@@ -31,6 +31,7 @@ std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> ecco::EccoManager<ecco::Ec
 //why can i return std:;shared_ptr but not std::make_shared
 template<>
 std::shared_ptr<ecco::EccoProduct> ecco::EccoManager<ecco::EccoProduct>::CreateProduct() {
+  std::lock_guard<std::mutex> lock(m_lock);
   return std::shared_ptr<ecco::EccoProduct>(new ecco::EccoProduct("BASE"));
 }
 

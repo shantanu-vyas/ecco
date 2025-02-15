@@ -27,12 +27,14 @@
 #include "glWrappers/FrameBuffer.hpp"
 #include "glWrappers/FrameBufferManager.hpp"
 #include "glWrappers/AttachmentManager.hpp"
+#include "appdelegate/AppDelegate.hpp"
 // #include "shaderManager/Shader.hpp"
 // #include "shaderManager/ShaderProgram.hpp"
 // #include "shaderManager/ShaderProgramManager.hpp"
 
 std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager;
 std::shared_ptr<ecco::OpenGL::AttachmentManager> m_attachmentManager;
+std::shared_ptr<ecco::Base::AppDelegate> m_appDelegate;
 
 int main()
 {
@@ -46,6 +48,8 @@ int main()
 
     std::cout << fbo->GetName() << std::endl;
     std::cout << attachment->GetName() << std::endl;
+    ecco::Base::AppDelegate::SetAppName("MY APP");
+    m_appDelegate = ecco::Base::AppDelegate::GetInstance();
 
 
 }
