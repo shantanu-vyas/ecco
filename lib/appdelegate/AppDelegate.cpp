@@ -78,6 +78,17 @@ void ecco::Base::AppDelegate::Resize(int width, int height) {
 
 }
 
+void ecco::Base::AppDelegate::SetTargetFrameRate(int fps) {
+    m_targetFramerate = fps;
+    m_targetFrameTime = m_targetFramerate / 60.0;
+    m_isVsyncEnabled = false;
+}
+
+void ecco::Base::AppDelegate::SetVsync(bool on) {
+    m_isVsyncEnabled = on;
+}
+
+
 //if we move where this is called from and not constructor we need to lock
 void ecco::Base::AppDelegate::initializeAppDelegate() {
     if (m_isGLFWInit) {
@@ -126,20 +137,14 @@ void ecco::Base::AppDelegate::initializeAppDelegate() {
 
 void ecco::Base::AppDelegate::mainLoop() {
 
-    double currentTargetFrameTime;
-
-    //move this a toggle vsync function, make currentTargetFrameRate a member var
-
-    if (m_isVsyncEnabled) {
-        const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        double monitorRefreshRate = mode ? mode->refreshRate : 60.0;
-        currentTargetFrameTime = 1.0 / monitorRefreshRate;
-    } else {
-        currentTargetFrameTime = m_targetFrameTime;
-    }
-
-    //ugh todo
-    //our frame time calc isnt aligning with the vsync calc, maybe we just do vsync manually here instead
+    // double currentTargetFrameTime;
+    // if (m_isVsyncEnabled) {
+    //     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    //     double monitorRefreshRate = mode ? mode->refreshRate : 60.0;
+    //     currentTargetFrameTime = 1.0 / monitorRefreshRate;
+    // } else {
+    //     currentTargetFrameTime = m_targetFrameTime;
+    // }
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 
@@ -157,17 +162,20 @@ void ecco::Base::AppDelegate::mainLoop() {
         auto frameEnd = std::chrono::high_resolution_clock::now();
         double frameTime = std::chrono::duration<double>(frameEnd - frameStart).count();
 
-        //print warning if frametime was longer than target
-        if (frameTime > currentTargetFrameTime + .0001) {
-            std::cout << "Mode: " << (m_isVsyncEnabled ? "VSYNC " : "MANUAL FPS") << std::endl;
-            std::cout << "⚠ FRAME TOOK LONGER THAN EXPECTED: "
-                      << frameTime << "s (Target: "
-                      << currentTargetFrameTime << "s)" << std::endl;
-        }
+        //Manually do vsync by getting monitor frame time and capping frame time at that
+        //this way i can handle the vsync frame time warning since glfw doesn't let me
+        //also glfws clock is shit so i cant even manually check the frametime against glfw vsyn
 
         // for manual fps cap fps
         if (!m_isVsyncEnabled) {
-            double sleepTime = currentTargetFrameTime - frameTime;
+        //print warning if frametime was longer than target
+            if (frameTime > m_targetFrameTime + .0001) {
+                std::cout << "Mode: " << (m_isVsyncEnabled ? "VSYNC " : "MANUAL FPS") << std::endl;
+                std::cout << "⚠ FRAME TOOK LONGER THAN EXPECTED: "
+                          << frameTime << "s (Target: "
+                          << m_targetFrameTime << "s)" << std::endl;
+            }
+            double sleepTime = m_targetFrameTime - frameTime;
             if (sleepTime > 0) {
                 glfwWaitEventsTimeout(sleepTime);
             }

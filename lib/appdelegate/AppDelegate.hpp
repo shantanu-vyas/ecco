@@ -16,7 +16,8 @@ namespace ecco {
                 static void SetAppName(std::string appname);
                 static std::string GetAppName();
                 void Resize(int width, int height);
-
+                static void SetTargetFrameRate(int fps);
+                static void SetVsync(bool on);
 
             private:
                 AppDelegate();
@@ -28,7 +29,6 @@ namespace ecco {
                 static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
                 static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
                 static void scrollCallBack(GLFWwindow* window, double xoffset, double yoffset);
-
 
 
                 static std::shared_ptr<AppDelegate> m_singleton;
