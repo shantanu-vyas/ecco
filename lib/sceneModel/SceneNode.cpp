@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 using namespace ecco::SceneGraph;
+using namespace ecco::Model;
 
 SceneNode::SceneNode(std::string name) :
     EccoObject(name),
@@ -123,4 +124,26 @@ std::tuple<bool, glm::mat4> SceneNode::GetNodeToAncestorTransform(const std::sha
     glm::mat4 transform      = childToRoot * glm::inverse(ancestorToRoot);
 
     return { true, transform };
+}
+
+bool SceneNode::AddModelToNode(const std::shared_ptr<ecco::Model::Model>& model) {
+    if (std::find(m_models.begin(), m_models.end(), model) != m_models.end())
+        return false; //model exists already
+
+    m_models.emplace_back(model);
+    return true;
+}
+
+bool SceneNode::RemoveModelFromNode(const std::shared_ptr<ecco::Model::Model>& model) {
+    auto it = std::find(m_models.begin(), m_models.end(), model);
+    if (it == m_models.end()) //model doesnt exist
+        return false;
+
+    m_models.erase(it);
+    return true;
+
+}
+
+const std::vector<std::shared_ptr<Model>>& SceneNode::GetAllModelsFromNode() {
+    return m_models;
 }
