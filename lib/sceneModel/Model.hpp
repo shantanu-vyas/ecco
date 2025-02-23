@@ -48,6 +48,8 @@ namespace ecco {
     namespace Model {
 
         typedef std::vector<glm::dvec3> VertexList;
+        typedef std::vector<glm::dvec3> InstancePositions;
+        typedef std::vector<glm::dvec4> PerVertexColors;
         typedef std::vector<glm::ivec3> TriangleList;
         typedef std::vector<glm::dvec2> TexCoords;
 

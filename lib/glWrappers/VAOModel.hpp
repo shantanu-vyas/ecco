@@ -7,10 +7,17 @@
 #include <memory>
 
 
-//Vao Object shouldnt link against a texture it should linke against a material
-//material has -> tex id, albedo, diffuse, specular, ambient, shinieness, roughness, alpha, per vertex colors, per face color, gi settings etc.... shadows blah blah
-//material also needs a way to chose which coloring mode its using (p vertex color, phong shading, p triangle colors)
-//material also needs to flag if its enabling post processing effects, gi, shadows, w/e
+/*
+* TODO
+* 1) does 1 vao model have all submeshes
+* 2) constructors need to pull out material data from the model to determine how to set up the VAO
+*    if model has a material, if material has texture coords make tex coord stuff
+*    if model has a material, if model has no texture coords ...
+*    if model has a material, multiple texmapps ..etc....
+*    gotta figure this out some other time
+*
+*
+*/
 
 
 namespace ecco
@@ -20,21 +27,50 @@ namespace ecco
         class VAOModel : public ecco::EccoProduct
         {
             public:
-                // explicit VAOModel(const std::shared_ptr<Model::Model> model);
-                // VAOModel() = delete;
-                // VAOModel(VAOModel&) = delete;
-                // ~VAOModel();
+                VAOModel() = delete;
+                VAOModel(VAOModel&) = delete;
+                VAOModel(const VAOModel&) = delete;
 
+                //Create basic VAO model
+                VAOModel(std::shared_ptr<ecco::Model::Model> model);
 
-                void RecreateVAO(std::shared_ptr<Model::Model> model);
-                void LinkTexture(); //Texture object isnt created yet
-                void DeleteVao();
+                VAOModel(std::shared_ptr<ecco::Model::Model> model,
+                         ecco::Model::InstancePositions instancingPositions);
+                VAOModel(std::shared_ptr<ecco::Model::Model> model,
+                         ecco::Model::PerVertexColors perVertexColors);
+
+                VAOModel(std::shared_ptr<ecco::Model::Model> model,
+                         ecco::Model::InstancePositions instancingPositions,
+                         ecco::Model::PerVertexColors perVertexColors);
+
+                void EnableInstancing(); //assert if m_hasInstancing is false
+                void DisableInstancing();
+                bool GetHasInstancing() const;
+                bool GetIsInstancing() const;
+
+                void EnablePerVertexColors(); //assert if m_hasPerVertexColors is false
+                void DisablePerVertexColors();
+                bool GetHasPerVertexColors() const;
+                bool GetIsPerVertexColors() const;
+
+                void CreateVAO(std::shared_ptr<Model::Model> model);
 
             private:
-                GLuint m_vao, m_vboVerts, m_vboNorms, m_vboTexCoords;
+                GLuint m_vao, m_vboVerts, m_vboNorms, m_eboTriangles, m_vboTexCoords;
+                int m_numVertices, m_numTriangles;
 
-                bool m_instancedObjects;
+                bool m_hasInstancing;
+                bool m_isInstancing;
                 GLuint m_vaoInstancedPositions;
+
+                bool m_hasPerVertexColors;
+                bool m_isPerVertexColors;
+                GLuint m_perVertexColors;
+
+                //Model owns shared ptr to this object
+                std::weak_ptr<ecco::Model::Model> m_model;
+                std::weak_ptr<ecco::Material::Material> m_material; //Get material handle here
+
 
                 //texture link
 
