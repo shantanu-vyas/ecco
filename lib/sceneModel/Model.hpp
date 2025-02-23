@@ -2,6 +2,8 @@
 #define MODEL_HPP
 
 #include "../ecco/EccoObject.hpp"
+#include "../materials/Material.hpp"
+#include "../utils/GLMUtils.hpp"
 #include <algorithm> // std::sort, std::includes
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
@@ -14,12 +16,56 @@
  * ex. Mario's eyes can be a different texture from his faces but the hat and body can be part of the same model
  *  */
 
+/**
+ * Okay so last thing here is adding the VAO/VBO calls and how I want to manage this.
+ * I had the idea for a VAOObject which is a wrapper on VAO/VBO/EBO/etc....
+ * So a modelData should own a unique_ptr? to that VAOObject
+ *
+ * 1) Do we make 1 vao object for multiple submeshes? or do we make 1 vao object each
+ * 2) When we call createVAO() we can not ALLOW the user to make it more than once so we keep track of that
+ * 3) When we call createVAO() we can have an option to cache the vertices and triangle list and tex coord list of
+ *    model, submesh, texmap but we should have it ideally clear these lists since we don't *need* to keep these in memory since
+ *    they are now stored on the GPU. So we keep track of is isCached which is set to true in constructor and set to false depending on the
+ *    flag passed into vaoObject = createVAO(bool deleteCache = true)
+ */
+
+/*
+ * make a default model creator, for spheres, boxes, cones, rectangles etc.. basic shapes
+ * make a stl loader (binary and ascii)
+ *  */
 
 namespace ecco {
     namespace Model {
 
+        typedef std::vector<glm::dvec3> VertexList;
+        typedef std::vector<glm::ivec3> TriangleList;
+        typedef std::vector<glm::dvec2> TexCoords;
+
+        static bool isVertexListSubset(const VertexList& a, const VertexList& b) {
+
+            VertexList sortedSubset = a;
+            VertexList sortedSuperset = b;
+
+            std::sort(sortedSubset.begin(), sortedSubset.end(), glm::dvec3Sort);
+            std::sort(sortedSuperset.begin(), sortedSuperset.end(), glm::dvec3Sort);
+
+            return std::includes(sortedSuperset.begin(), sortedSuperset.end(),
+                                 sortedSubset.begin(), sortedSubset.end(),
+                                 glm::dvec3Sort);
+        };
+
+        static bool isVertexListEqual(const VertexList& v1, const VertexList& v2) {
+            VertexList a = v1;
+            VertexList b = v2;
+
+            std::sort(a.begin(), a.end(), glm::dvec3Sort);
+            std::sort(b.begin(), b.end(), glm::dvec3Sort);
+
+            return a == b;
+        }
+
         class Model : ecco::EccoObject,
-                      public std::enable_shared_from_this<SceneNode> { //will be needed for making texture maps for the weakptr?
+                      public std::enable_shared_from_this<ecco::Model::Model> { //will be needed for making texture maps for the weakptr?
 
             public:
                 Model() = delete;
@@ -29,73 +75,120 @@ namespace ecco {
                 ~Model() = default;
                 void LoadModel(std::string filename);
                 void SetTexCoords(const std::vector<glm::vec2> &coords);
-                std::vector<glm::dvec3> GetVertices() const { return m_vertices; };
-                std::vector<glm::ivec3> GetTriangles() const { return m_triangles; };
+                VertexList GetVertices() const { return m_vertices; };
+                TriangleList GetTriangles() const { return m_triangles; };
                 // idk what should be in here figure it out.
                 // Different loaders?
             private:
                 int m_numVertices;
                 int m_numTriangles;
-                std::vector<glm::dvec3> m_vertices;
-                std::vector<glm::ivec3> m_triangles;
+                VertexList m_vertices;
+                TriangleList m_triangles;
         };
 
-        class SubMesh() {
-            //weakptr ref to model
-            //also needs access to glmvecsort and issubset so we will just move those to general util functions for now
-            //has a subset list of triangles and vertices
-            //has a weak reference to a material
-            //has a texturemap
-        }
+        class TextureMap : ecco::EccoObject {
 
-        class TextureMap {
-            TextureMap() = delete;
-            TextureMap(TextureMap &) = delete;
-            TextureMap(const TextureMap &) = delete;
+            public:
+                TextureMap() = delete;
+                TextureMap(TextureMap &) = delete;
+                TextureMap(const TextureMap &) = delete;
 
-            TextureMap(std::shared_ptr<ecco::Model::Model> model,
-                       std::vector<glm::dvec2> texCoords,
-                       std::vector<glm::dvec3> texVertex)
-                : m_model(model), m_texCoords(texCoords), m_texVertex(texVertex) {
+                TextureMap(std::string name,
+                           std::shared_ptr<ecco::Model::Model> model,
+                           TexCoords texCoords,
+                           VertexList texVertex) :
+                    ecco::EccoObject(name),
+                    m_model(model),
+                    m_texCoords(texCoords),
+                    m_texVertex(texVertex) {
 
-                ValidateTexture();
-            }
+                    ValidateTexture();
+                }
 
-            void ValidateTexture() {
-                assert(m_texCoords.size() == m_texVertex.size());
+                void ValidateTexture() {
+                    assert(m_texCoords.size() == m_texVertex.size());
+                    assert(isVertexListSubset(m_texVertex, m_model.lock()->GetVertices()));
+                }
 
-                //write a glm sort for now
-                auto glmVecSort = [](const glm::dvec3 &a, const glm::dvec3 &b) {
-                    if (a.x != b.x)
-                        return a.x < b.x;
-                    if (a.y != b.y)
-                        return a.y < b.y;
-                    return a.z < b.z;
-                };
+                VertexList GetVertices() const {
+                    return m_texVertex;
+                }
 
-                //this doesn't need to be a lambda but i wanna play w breaking up big functions
-                auto isSubset = [&, this]() -> bool {
+                TexCoords GetTexCoords() const {
+                    return m_texCoords;
+                }
 
-                    std::vector<glm::dvec3> sortedSubset = m_texVertex;
-                    std::vector<glm::dvec3> sortedSuperset = m_model.lock()->GetVertices();
-
-
-                    std::sort(sortedSubset.begin(), sortedSubset.end(), glmVecSort);
-                    std::sort(sortedSuperset.begin(), sortedSuperset.end(), glmVecSort);
-
-                    return std::includes(sortedSuperset.begin(), sortedSuperset.end(),
-                                         sortedSubset.begin(), sortedSubset.end(),
-                                         glmVecSort);
-                };
-
-                assert(isSubset());
-            }
             private:
                 std::weak_ptr<Model> m_model;
-                std::vector<glm::dvec2> m_texCoords;
-                std::vector<glm::dvec3> m_texVertex;
+                TexCoords m_texCoords;
+                VertexList m_texVertex;
 
         };
+
+        class SubMesh  : ecco::EccoObject {
+            public:
+                //Default Material Constructor
+                SubMesh(std::string name,
+                        std::shared_ptr<ecco::Model::Model> model,
+                        VertexList vertices,
+                        TriangleList triangles) :
+                    ecco::EccoObject(name),
+                    m_masterModel(model),
+                    m_vertices(vertices),
+                    m_triangles(triangles) {
+
+                    assert(m_vertices.size() == m_masterModel.lock()->GetVertices().size());
+
+                }
+
+                //Non Texture Mapped Material Constructor
+                SubMesh(std::string name,
+                        std::shared_ptr<ecco::Model::Model> model,
+                        VertexList vertices,
+                        TriangleList triangles,
+                        std::shared_ptr<ecco::Material::Material> material) :
+                    ecco::EccoObject(name),
+                    m_masterModel(model),
+                    m_vertices(vertices),
+                    m_triangles(triangles),
+                    m_material(material) {
+
+                    assert(m_vertices == m_masterModel.lock()->GetVertices());
+                }
+
+                //Texture Map Material Constructor
+                SubMesh(std::string name,
+                        std::shared_ptr<ecco::Model::Model> model,
+                        VertexList vertices,
+                        TriangleList triangles,
+                        std::shared_ptr<ecco::Material::Material> material,
+                        std::shared_ptr<ecco::Model::TextureMap> textureMap) :
+                    ecco::EccoObject(name),
+                    m_masterModel(model),
+                    m_vertices(vertices),
+                    m_triangles(triangles),
+                    m_material(material),
+                    m_textureMap(textureMap) {
+
+                    assert(m_vertices == m_masterModel.lock()->GetVertices());
+                    //Submesh vertices have to be 1 :1 with
+                    assert(isVertexListEqual(m_vertices, m_textureMap->GetVertices()));
+                }
+
+
+                VertexList GetVertices() const { return m_vertices; };
+                TriangleList GetTriangles() const { return m_triangles; };
+
+
+
+            private:
+                std::weak_ptr<Model> m_masterModel;
+                VertexList m_vertices;
+                TriangleList m_triangles;
+                std::shared_ptr<ecco::Material::Material> m_material;
+                std::shared_ptr<ecco::Model::TextureMap> m_textureMap;
+        };
+
     } // namespace Model
 } // namespace ecco
 #endif
