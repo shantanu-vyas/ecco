@@ -28,6 +28,15 @@
  *    model, submesh, texmap but we should have it ideally clear these lists since we don't *need* to keep these in memory since
  *    they are now stored on the GPU. So we keep track of is isCached which is set to true in constructor and set to false depending on the
  *    flag passed into vaoObject = createVAO(bool deleteCache = true)
+ *
+ *
+ * Okay side note: I might actually want a VAOManager because of issues where you can bind the wrong vbo to a vao?
+ * Technically this shouldnt be a problem, doing
+ * glBindVertexArray(vaoA);
+ * glBindBuffer(GL_ARRA_BUFFER, vboB_vertices);
+ * glDrawElements(GL_TRIANGLES ...) will call the draw on VAOA and all of A's VBO's not VBO B
+ * VBO B would also be "replaced" into A if I manually did a glVertexAttribPointer
+ * ... Maybe i dont need a manager for this... i did want managers to maintain all opengl stuff but not sure if its needed ahhhhhh
  */
 
 /*
