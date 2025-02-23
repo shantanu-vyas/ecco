@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <memory>
 // #include "assetLoaders/ImageLoader.hpp"
 // #include "assetLoaders/ModelLoader.hpp"
 // #include "assetLoaders/ObjLoader.hpp"
@@ -36,6 +37,8 @@ std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager;
 std::shared_ptr<ecco::OpenGL::AttachmentManager> m_attachmentManager;
 std::shared_ptr<ecco::Base::AppDelegate> m_appDelegate;
 
+void TestSceneGraph();
+
 int main()
 {
     // std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
@@ -48,8 +51,31 @@ int main()
 
     std::cout << fbo->GetName() << std::endl;
     std::cout << attachment->GetName() << std::endl;
+
+    TestSceneGraph();
+
     ecco::Base::AppDelegate::SetAppName("MY APP");
+
     m_appDelegate = ecco::Base::AppDelegate::GetInstance();
 
 
+}
+
+void TestSceneGraph() {
+    std::shared_ptr<ecco::SceneGraph::SceneGraph> sceneGraph = std::make_shared<ecco::SceneGraph::SceneGraph>("");
+    std::shared_ptr<ecco::SceneGraph::SceneNode> rootNode = std::make_shared<ecco::SceneGraph::SceneNode>("root");
+    std::shared_ptr<ecco::SceneGraph::SceneNode> l1Child1 = std::make_shared<ecco::SceneGraph::SceneNode>("L1C1");
+    std::shared_ptr<ecco::SceneGraph::SceneNode> l1Child2 = std::make_shared<ecco::SceneGraph::SceneNode>("L1C2");
+    std::shared_ptr<ecco::SceneGraph::SceneNode> l2Child1 = std::make_shared<ecco::SceneGraph::SceneNode>("L2C1");
+    std::shared_ptr<ecco::SceneGraph::SceneNode> l2Child2 = std::make_shared<ecco::SceneGraph::SceneNode>("L2C2");
+
+
+    sceneGraph->SetRootNode(rootNode);
+    rootNode->AddChild(l1Child1);
+    rootNode->AddChild(l1Child2);
+
+    l1Child1->AddChild(l2Child1);
+    l1Child1->AddChild(l2Child2);
+
+    sceneGraph->PrintTree();
 }

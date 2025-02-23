@@ -14,7 +14,7 @@ SceneGraph::SceneGraph(std::string name)
 
 }
 
-void SceneGraph::SetRootNode(const std::shared_ptr<SceneNode>& rootNode)
+void SceneGraph::SetRootNode(const std::shared_ptr<SceneNode> rootNode)
 {
     if (rootNode == nullptr) {
         std::cout << "SceneGraph::SetRootNode, null root node" << std::endl;
@@ -46,7 +46,7 @@ std::shared_ptr<SceneNode> SceneGraph::GetRootNode() const {
     return m_rootNode;
 }
 
-std::tuple<bool, glm::mat4> SceneGraph::GetRootToNodeTransform(const std::shared_ptr<SceneNode>& node) const
+std::tuple<bool, glm::mat4> SceneGraph::GetRootToNodeTransform(const std::shared_ptr<SceneNode> node) const
 {
     //if root node or node is null return false
     if (!m_rootNode || !node) {
@@ -65,8 +65,8 @@ std::tuple<bool, glm::mat4> SceneGraph::GetRootToNodeTransform(const std::shared
     return { true, rootToNode };
 }
 
-std::tuple<bool, glm::mat4> SceneGraph::GetNodeToNodeTransform(const std::shared_ptr<SceneNode>& n1,
-                                                               const std::shared_ptr<SceneNode>& n2) const {
+std::tuple<bool, glm::mat4> SceneGraph::GetNodeToNodeTransform(const std::shared_ptr<SceneNode> n1,
+                                                               const std::shared_ptr<SceneNode> n2) const {
 
     if (!m_rootNode || !n1 || !n2) {
         return { false, glm::mat4(1.0f) };
@@ -88,7 +88,7 @@ std::tuple<bool, glm::mat4> SceneGraph::GetNodeToNodeTransform(const std::shared
     return { true, n1ToN2 };
 }
 
-void SceneGraph::PrintTree(const std::shared_ptr<SceneNode>& start, int depth) const {
+void SceneGraph::PrintTree(const std::shared_ptr<SceneNode> start, int depth) const {
     std::shared_ptr<SceneNode> node = start ? start : m_rootNode;
 
     if (!node) {

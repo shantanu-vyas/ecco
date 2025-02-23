@@ -21,17 +21,17 @@ public:
   SceneGraph(const SceneGraph &) = delete;
   ~SceneGraph() = default;
 
-  void SetRootNode(const std::shared_ptr<SceneNode> &rootNode);
+  void SetRootNode(const std::shared_ptr<SceneNode> rootNode);
   std::shared_ptr<SceneNode> GetRootNode() const;
 
   std::tuple<bool, glm::mat4>
-  GetRootToNodeTransform(const std::shared_ptr<SceneNode> &node) const;
+  GetRootToNodeTransform(const std::shared_ptr<SceneNode> node) const;
 
   std::tuple<bool, glm::mat4>
-  GetNodeToNodeTransform(const std::shared_ptr<SceneNode> &n1,
-                         const std::shared_ptr<SceneNode> &n2) const;
+  GetNodeToNodeTransform(const std::shared_ptr<SceneNode> n1,
+                         const std::shared_ptr<SceneNode> n2) const;
 
-  void PrintTree(const std::shared_ptr<SceneNode> &start = nullptr,
+  void PrintTree(const std::shared_ptr<SceneNode> start = nullptr,
                  int depth = 0) const;
 
 private:
