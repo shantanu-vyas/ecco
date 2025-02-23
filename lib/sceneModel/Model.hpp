@@ -4,6 +4,7 @@
 #include "../ecco/EccoObject.hpp"
 #include "../materials/Material.hpp"
 #include "../utils/GLMUtils.hpp"
+#include "../utils/assertMacros.hpp"
 #include <algorithm> // std::sort, std::includes
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
@@ -106,8 +107,8 @@ namespace ecco {
                 }
 
                 void ValidateTexture() {
-                    assert(m_texCoords.size() == m_texVertex.size());
-                    assert(isVertexListSubset(m_texVertex, m_model.lock()->GetVertices()));
+                    ecco_assert(m_texCoords.size() == m_texVertex.size(), "Texture Map Validate Error");
+                    ecco_assert(isVertexListSubset(m_texVertex, m_model.lock()->GetVertices()), "Texture Map Validate Error");
                 }
 
                 VertexList GetVertices() const {
@@ -137,7 +138,7 @@ namespace ecco {
                     m_vertices(vertices),
                     m_triangles(triangles) {
 
-                    assert(m_vertices.size() == m_masterModel.lock()->GetVertices().size());
+                    ecco_assert(m_vertices.size() == m_masterModel.lock()->GetVertices().size(), "Submesh Constructor Error");
 
                 }
 
@@ -153,7 +154,7 @@ namespace ecco {
                     m_triangles(triangles),
                     m_material(material) {
 
-                    assert(m_vertices == m_masterModel.lock()->GetVertices());
+                    ecco_assert(m_vertices == m_masterModel.lock()->GetVertices(), "Submesh Constructor Error");
                 }
 
                 //Texture Map Material Constructor
@@ -170,9 +171,8 @@ namespace ecco {
                     m_material(material),
                     m_textureMap(textureMap) {
 
-                    assert(m_vertices == m_masterModel.lock()->GetVertices());
-                    //Submesh vertices have to be 1 :1 with
-                    assert(isVertexListEqual(m_vertices, m_textureMap->GetVertices()));
+                    ecco_assert(m_vertices == m_masterModel.lock()->GetVertices(), "Submesh Constructor Error");
+                    ecco_assert(isVertexListEqual(m_vertices, m_textureMap->GetVertices()), "Submesh Constructor Error"); //Submesh vertices have to be 1 :1 with
                 }
 
 

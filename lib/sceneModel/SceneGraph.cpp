@@ -1,7 +1,7 @@
 #include "SceneGraph.hpp"
 #include "SceneNode.hpp"
+#include "../utils/assertMacros.hpp"
 #include <iostream>
-#include <cassert>
 #include <functional>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -16,10 +16,8 @@ SceneGraph::SceneGraph(std::string name)
 
 void SceneGraph::SetRootNode(const std::shared_ptr<SceneNode> rootNode)
 {
-    if (rootNode == nullptr) {
-        std::cout << "SceneGraph::SetRootNode, null root node" << std::endl;
-        assert(false);
-    }
+    ecco_assert(rootNode != nullptr, "Set Root Node Error");
+
     m_rootNode = rootNode;
 
     if (m_rootNode)

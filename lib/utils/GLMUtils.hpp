@@ -16,8 +16,4 @@ namespace glm {
 
 //not a glm util but im lazy
 
-
-
-
-
 #endif

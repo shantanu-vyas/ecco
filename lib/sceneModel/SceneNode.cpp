@@ -1,6 +1,6 @@
 #include "SceneNode.hpp"
+#include "../utils/assertMacros.hpp"
 #include <algorithm>
-#include <cassert>
 #include <iostream>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -21,10 +21,7 @@ void SceneNode::AddChild(const std::shared_ptr<SceneNode>& child) {
         return;
     }
 
-    if (child->HasParent()) {
-        std::cerr << "SceneNode::AddChild() error: Child already has a parent!" << std::endl;
-        assert(false);
-    }
+    ecco_assert(!child->HasParent(), "Child already has a parent");
 
     //Do not do = new shared_ptr<scenenode> this or we create a new one
     //if we use shared_from_this() this new smart pointer is added to the same ownership block as whoever owns this
