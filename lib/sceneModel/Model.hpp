@@ -99,7 +99,7 @@ namespace ecco {
         };
 
         class TextureMap : ecco::EccoObject {
-
+            friend class SubMesh;
             public:
                 TextureMap() = delete;
                 TextureMap(TextureMap &) = delete;
@@ -107,95 +107,118 @@ namespace ecco {
 
                 TextureMap(std::string name,
                            std::shared_ptr<ecco::Model::Model> model,
-                           TexCoords texCoords,
-                           VertexList texVertex) :
+                           const TexCoords& texCoords,
+                           size_t offset,
+                           size_t size) :
                     ecco::EccoObject(name),
                     m_model(model),
                     m_texCoords(texCoords),
-                    m_texVertex(texVertex) {
+                    m_vertexOffset(offset),
+                    m_vertexSize(size) {
 
-                    ValidateTexture();
+                    validateTexture();
                 }
 
-                void ValidateTexture() {
-                    ecco_assert(m_texCoords.size() == m_texVertex.size(), "Texture Map Validate Error");
-                    ecco_assert(isVertexListSubset(m_texVertex, m_model.lock()->GetVertices()), "Texture Map Validate Error");
-                }
-
-                VertexList GetVertices() const {
-                    return m_texVertex;
-                }
-
-                TexCoords GetTexCoords() const {
-                    return m_texCoords;
-                }
+                TexCoords GetTexCoords() const { return m_texCoords; };
+                void SetTexCoords(const TexCoords& texCoords) {
+                    m_texCoords = texCoords;
+                    validateTexture();
+                };
 
             private:
+                void validateTexture() {
+                    ecco_assert(m_texCoords.size() == m_vertexSize, "Texture Map Validate Error");
+                }
+
+                size_t m_vertexOffset;
+                size_t m_vertexSize;
                 std::weak_ptr<Model> m_model;
                 TexCoords m_texCoords;
-                VertexList m_texVertex;
+
 
         };
 
-        class SubMesh  : ecco::EccoObject {
+
+        /*
+         * Submeshes will have to be in the form of contigious triangles to make memory copies easier
+         * Regardless if we have 1 or N submeshes we only want 1 vao with all the data 1 time otherwise
+         *   a) we are requesting alot of resources
+         *   b) we are binding alot of resources for a single object which is uneccesary if we can just do good bookkeeping
+         *  */
+        class SubMesh : ecco::EccoObject {
+
             public:
                 //Default Material Constructor
                 SubMesh(std::string name,
                         std::shared_ptr<ecco::Model::Model> model,
-                        VertexList vertices,
-                        TriangleList triangles) :
+                        size_t vertexOffset,
+                        size_t vertexSize) :
                     ecco::EccoObject(name),
                     m_masterModel(model),
-                    m_vertices(vertices),
-                    m_triangles(triangles) {
+                    m_vertexOffset(vertexOffset),
+                    m_vertexSize(vertexSize) {
 
-                    ecco_assert(m_vertices.size() == m_masterModel.lock()->GetVertices().size(), "Submesh Constructor Error");
+                    ecco_assert(areVertexBoundsValid(), "Submesh Constructor Error");
 
                 }
 
                 //Non Texture Mapped Material Constructor
                 SubMesh(std::string name,
                         std::shared_ptr<ecco::Model::Model> model,
-                        VertexList vertices,
-                        TriangleList triangles,
+                        size_t vertexOffset,
+                        size_t vertexSize,
                         std::shared_ptr<ecco::Material::Material> material) :
                     ecco::EccoObject(name),
                     m_masterModel(model),
-                    m_vertices(vertices),
-                    m_triangles(triangles),
+                    m_vertexOffset(vertexOffset),
+                    m_vertexSize(vertexSize),
                     m_material(material) {
 
-                    ecco_assert(m_vertices == m_masterModel.lock()->GetVertices(), "Submesh Constructor Error");
+                    ecco_assert(areVertexBoundsValid(), "Submesh Constructor Error");
                 }
 
                 //Texture Map Material Constructor
                 SubMesh(std::string name,
                         std::shared_ptr<ecco::Model::Model> model,
-                        VertexList vertices,
-                        TriangleList triangles,
+                        size_t vertexOffset,
+                        size_t vertexSize,
                         std::shared_ptr<ecco::Material::Material> material,
                         std::shared_ptr<ecco::Model::TextureMap> textureMap) :
                     ecco::EccoObject(name),
                     m_masterModel(model),
-                    m_vertices(vertices),
-                    m_triangles(triangles),
+                    m_vertexOffset(vertexOffset),
+                    m_vertexSize(vertexSize),
                     m_material(material),
                     m_textureMap(textureMap) {
 
-                    ecco_assert(m_vertices == m_masterModel.lock()->GetVertices(), "Submesh Constructor Error");
-                    ecco_assert(isVertexListEqual(m_vertices, m_textureMap->GetVertices()), "Submesh Constructor Error"); //Submesh vertices have to be 1 :1 with
+                    ecco_assert(areVertexBoundsValid(), "Submesh Constructor Error");
+
+                    //These will probably eventually be not needed since we will create the texturemap given a submesh param
+                    //leaving it in for now until i start writing that part
+                    ecco_assert(m_vertexOffset != m_textureMap->m_vertexOffset, "Submesh Constructor Error");
+                    ecco_assert(m_vertexSize != m_textureMap->m_vertexSize, "Submesh Constructor Error");
                 }
 
+                std::shared_ptr<ecco::Material::Material> GetMaterial() const {
+                    return m_material;
+                }
 
-                VertexList GetVertices() const { return m_vertices; };
-                TriangleList GetTriangles() const { return m_triangles; };
-
-
+                std::shared_ptr<ecco::Model::TextureMap> GetTextureMap() const {
+                    return m_textureMap;
+                }
 
             private:
+                //having this return bool instead of asserting directly so assert gives us line number for which constructor
+                bool areVertexBoundsValid() {
+                    if (m_vertexOffset > m_masterModel.lock()->GetVertices().size() ||
+                        m_vertexOffset + m_vertexSize > m_masterModel.lock()->GetVertices().size())
+                        return false;
+                    return true;
+                }
+
                 std::weak_ptr<Model> m_masterModel;
-                VertexList m_vertices;
-                TriangleList m_triangles;
+                size_t m_vertexOffset;
+                size_t m_vertexSize;
                 std::shared_ptr<ecco::Material::Material> m_material;
                 std::shared_ptr<ecco::Model::TextureMap> m_textureMap;
         };
