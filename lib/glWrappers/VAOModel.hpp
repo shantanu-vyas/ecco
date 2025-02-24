@@ -2,7 +2,6 @@
 #define VAOMODEL_HPP
 
 #include <GL/gl.h>
-#include "../ecco/EccoProduct.hpp"
 #include "../sceneModel/Model.hpp"
 #include <memory>
 
@@ -77,7 +76,7 @@ namespace ecco
                 VAOModel(const VAOModel&) = delete;
 
                 VAOModel(const std::shared_ptr<ecco::Model::Model>& model) :
-                    ecco::EccoObject("-VBOModel"), //why cant i add model->getName()?
+                    ecco::EccoObject(model->GetName() + "-VBOModel"),
                     m_model(model),
                     m_hasInstancing(false),
                     m_hasPerVertexColors(false),

@@ -76,7 +76,7 @@ namespace ecco {
             return a == b;
         }
 
-        class Model : ecco::EccoObject,
+        class Model : public ecco::EccoObject,
                       public std::enable_shared_from_this<ecco::Model::Model> { //will be needed for making texture maps for the weakptr?
 
             public:
