@@ -12,6 +12,7 @@ find_package(GLEW REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLM REQUIRED glm)
 pkg_check_modules(GLFW REQUIRED glfw3)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # pkg_check_modules(FREEGLUT REQUIRED freeglut)
 
 # Include directories

@@ -29,7 +29,9 @@
 #include "glWrappers/FrameBufferManager.hpp"
 #include "glWrappers/AttachmentManager.hpp"
 #include "appdelegate/AppDelegate.hpp"
-// #include "shaderManager/Shader.hpp"
+
+
+#include "shaderManager/Shader.hpp"
 // #include "shaderManager/ShaderProgram.hpp"
 // #include "shaderManager/ShaderProgramManager.hpp"
 
@@ -57,6 +59,8 @@ int main()
     ecco::Base::AppDelegate::SetAppName("MY APP");
 
     m_appDelegate = ecco::Base::AppDelegate::GetInstance();
+
+    auto shader = ecco::OpenGL::Shader("asdf", "asdf", ecco::OpenGL::LT_FromSource, ecco::OpenGL::ST_Fragment);
 
 
 }

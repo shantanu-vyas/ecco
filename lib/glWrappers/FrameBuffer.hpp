@@ -25,7 +25,7 @@ namespace ecco
 
             protected:
 
-                explicit FrameBuffer(std::string name, int width, int height) :
+                FrameBuffer(const std::string& name, int width, int height) :
                     EccoProduct("FBO-" + name),
                     m_width(width),
                     m_height(height) {}
