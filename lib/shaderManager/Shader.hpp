@@ -45,6 +45,9 @@ namespace ecco
                 /* THIS MAY NOT WORK THE BEST AND IS FOR EARLY DEBUGGING
                  * Especially once i start defining structs/complex types inside of shaders i will need a way
                  * for the parser to parse them and a way to add them to the uniformtypes lists
+                 *
+                 * OpenGL doesn't let you query a shader directly for its uniforms so this will regex a file
+                 * We can query a shaderprogram for its ACTIVE_UNIFORMS but we cant tie any uniforms to a specific shader
                  * */
                 void ParseShaderForUniforms();
                 std::map<std::string, UniformType> GetUniforms() const;
@@ -68,17 +71,24 @@ namespace ecco
                 [[nodiscard]] GLuint GetShaderID() const { return m_shaderID; };
                 //These are all marked nodiscard because we need to throw or something if they come back bad
                 //OpenGL lets you operate with unloaded/noncompiled shaders and it will lead to fuckyness
-                [[nodiscard]] bool loadFromFile(std::string filename);
-                [[nodiscard]] bool loadFromCachedBinary(std::string filename);
-                [[nodiscard]] bool reloadFromFile(std::string filename);
-                [[nodiscard]] bool relinkAttachedPrograms(); //needs a vector weakptr to shader programs (this will be so we can modify the shader at runtime)
-                [[nodiscard]] bool saveCachedBinary(std::string filename);
+
+                [[nodiscard]] bool ReloadFromFile(std::string filename);
+                [[nodiscard]] bool SaveCachedBinary(std::string filename);
 
                 bool AddShaderProgramUsage(std::shared_ptr<ShaderProgram> program);
                 bool RemoveShaderProgramUsage(std::shared_ptr<ShaderProgram> program);
 
-
             private:
+                [[nodiscard]] bool loadFromFile(std::string filename);
+                [[nodiscard]] bool loadFromCachedBinary(std::string filename);
+
+                /* I need to think about who will call this. The user will modify a shader at runtime and we need to relink
+                 * all ShaderPrograms that are using it so this should be called by a public reload func?
+                 * in which case the protected reloadfromfile and savecachedbinary files need to be public... figure this out
+                 * after writing the shaderprogram and writing the impl for this file */
+
+                [[nodiscard]] bool relinkAttachedPrograms();
+
                 std::string m_filename;
                 LoadType m_loadType;
 
