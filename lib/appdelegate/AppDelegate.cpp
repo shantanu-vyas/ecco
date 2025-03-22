@@ -1,3 +1,6 @@
+#include <GL/glew.h>
+#include <GL/gl.h>
+
 #include "AppDelegate.hpp"
 #include <GLFW/glfw3.h>
 #include <memory>
@@ -26,6 +29,22 @@ ecco::Base::AppDelegate::AppDelegate() :
 {
     std::cout << "Initializing App Delegate" << std::endl;
     initializeAppDelegate();
+}
+
+ecco::Base::AppDelegate::~AppDelegate() {
+    if (m_glfwWindow) {
+        glfwTerminate();
+    }
+}
+
+void ecco::Base::AppDelegate::Run() {
+
+    std::cout << "Initializing Shaders" << std::endl;
+
+    if (m_initializeShadersCB)
+        m_initializeShadersCB();
+    else
+        std::cout << "No initialize shaders CB set" << std::endl;
 
     /* This value for vsync can be
      * 0 vsync off
@@ -37,13 +56,6 @@ ecco::Base::AppDelegate::AppDelegate() :
     glfwSwapInterval(m_isVsyncEnabled);
     std::cout << "Main Loop Running" << std::endl;
     mainLoop();
-
-}
-
-ecco::Base::AppDelegate::~AppDelegate() {
-    if (m_glfwWindow) {
-        glfwTerminate();
-    }
 }
 
 void ecco::Base::AppDelegate::SetAppName(std::string appname) {
@@ -132,6 +144,8 @@ void ecco::Base::AppDelegate::initializeAppDelegate() {
     glfwSetScrollCallback(m_glfwWindow.get(), ecco::Base::AppDelegate::scrollCallBack);
 
     m_isGLFWInit = true;
+
+    glewInit();
 }
 
 
@@ -212,3 +226,7 @@ void ecco::Base::AppDelegate::keyCallback(GLFWwindow* window, int key, int scanc
 void ecco::Base::AppDelegate::mouseCallback(GLFWwindow* window, double xpos, double ypos) { }
 void ecco::Base::AppDelegate::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) { }
 void ecco::Base::AppDelegate::scrollCallBack(GLFWwindow* window, double xoffset, double yoffset) { }
+
+void ecco::Base::AppDelegate::SetInitializeShadersCB(std::function<void(void)> cb) {
+    m_initializeShadersCB = cb;
+}

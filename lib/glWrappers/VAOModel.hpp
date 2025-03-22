@@ -1,6 +1,7 @@
 #ifndef VAOMODEL_HPP
 #define VAOMODEL_HPP
 
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include "../sceneModel/Model.hpp"
 #include <memory>

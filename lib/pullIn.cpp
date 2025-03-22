@@ -40,6 +40,7 @@ std::shared_ptr<ecco::OpenGL::AttachmentManager> m_attachmentManager;
 std::shared_ptr<ecco::Base::AppDelegate> m_appDelegate;
 
 void TestSceneGraph();
+void InitializeShaders();
 
 int main()
 {
@@ -57,12 +58,22 @@ int main()
     TestSceneGraph();
 
     ecco::Base::AppDelegate::SetAppName("MY APP");
-
     m_appDelegate = ecco::Base::AppDelegate::GetInstance();
 
-    auto shader = ecco::OpenGL::Shader("asdf", "asdf", ecco::OpenGL::LT_FromSource, ecco::OpenGL::ST_Fragment);
+    m_appDelegate->SetInitializeShadersCB([]() {InitializeShaders();});
+
+    m_appDelegate->Run();
 
 
+}
+
+void InitializeShaders() {
+    ecco::OpenGL::Shader::SetShaderLoadDir("../shaders/general/");
+
+    auto shader = ecco::OpenGL::Shader("Vertex", "vert-Vertex.glsl", ecco::OpenGL::ST_Vertex);
+    std::cout << shader.GetCompileLog() << std::endl;
+    std::cout << "Shader Loaded: " << shader.GetIsLoaded() << std::endl;
+    std::cout << "Shader Compilation: " << shader.GetIsCompiled() << std::endl;
 }
 
 void TestSceneGraph() {

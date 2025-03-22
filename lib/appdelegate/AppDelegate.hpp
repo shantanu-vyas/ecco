@@ -11,13 +11,15 @@ namespace ecco {
                 AppDelegate(const AppDelegate &) = delete;
                 ~AppDelegate();
                 AppDelegate &operator=(const AppDelegate &) = delete;
-
+                void Run();
                 [[nodiscard]] static std::shared_ptr<AppDelegate> GetInstance();
                 static void SetAppName(std::string appname);
                 static std::string GetAppName();
                 void Resize(int width, int height);
                 static void SetTargetFrameRate(int fps);
                 static void SetVsync(bool on);
+
+                void SetInitializeShadersCB(std::function<void(void)> cb);
 
             private:
                 AppDelegate();
@@ -42,6 +44,10 @@ namespace ecco {
                 static int m_targetFramerate;
                 static double m_targetFrameTime;
                 static bool m_isVsyncEnabled;
+
+
+                //callbacks
+                std::function<void(void)> m_initializeShadersCB;
 
                 //GLFW
                 static std::shared_ptr<GLFWwindow> m_glfwWindow;
