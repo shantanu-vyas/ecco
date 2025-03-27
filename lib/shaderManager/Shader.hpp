@@ -19,7 +19,7 @@ namespace ecco {
 namespace OpenGL {
 
 
-enum ShaderType { ST_None, ST_Vertex, ST_Fragment, ST_Geometry };
+enum ShaderType : unsigned int { ST_None, ST_Vertex, ST_Fragment, ST_Geometry };
 
 class Shader : public ecco::EccoProduct,
                public std::enable_shared_from_this<Shader> {

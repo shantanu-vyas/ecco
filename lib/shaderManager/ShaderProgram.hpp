@@ -3,10 +3,15 @@
 
 #include "../ecco/EccoProduct.hpp"
 #include "Shader.hpp"
+// #include "Shader.hpp"
 #include <memory>
+#include <variant>
 
 namespace ecco {
 namespace OpenGL {
+  class Shader;
+  enum ShaderType : unsigned int; //Forward declaring enums requires defining the type
+
 class ShaderProgram : public ecco::EccoProduct,
                       public std::enable_shared_from_this<ShaderProgram> {
   public:
@@ -20,16 +25,16 @@ class ShaderProgram : public ecco::EccoProduct,
   [[nodiscard]] bool reloadShaderProgram();
   std::shared_ptr<ShaderProgram> Copy();
 
-  void setShadersForSingleType(const std::vector < std::shared_ptr<Shader>& shaders, ShaderType type);
+  void setShadersForSingleType(const std::vector<std::shared_ptr<Shader>>& shaders, ShaderType type);
 
   void setVertexShaders(const std::vector<std::shared_ptr<Shader>> &vertexShaders);
   void addVertexShader(const std::shared_ptr<Shader> shader);
 
-  void setFragmentShaders(const std::vector<std::shared_ptr<Shader>> &fragmentShaders);
-  void addFragmentShader(const std::shared_ptr < Shader >> shader);
+  void setFragmentShaders(const std::vector<std::shared_ptr<Shader>>& fragmentShaders);
+  void addFragmentShader(std::shared_ptr<Shader> shader);
 
   void setGeometryShaders(const std::vector<std::shared_ptr<Shader>> &fragmentShaders);
-  void addGeometryShader(const std::shared_ptr<Shader> shader);
+  void addGeometryShader(std::shared_ptr<Shader> shader);
 
   bool linkShaders();
 
