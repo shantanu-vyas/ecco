@@ -32,6 +32,60 @@ void TurboView::SetHeight(float h) {
     if (m_onResizeCB)
         m_onResizeCB();
 }
+
+/* How is the call order here going to work
+ * PrePreRender gets called on all views that have it before anything
+ * PreRender gets called right before a view is rendered
+ * Render gets called to render the view
+ * PostRender gets called right after a view is rendered
+ * PostPostRender gets called on all view after everything has been rendered
+ * */
+
+void TurboView::PrePreRender() {
+    OnPrePreRender();
+    for (auto child : m_children)
+        child->PrePreRender();
+}
+void TurboView::OnPrePreRender() {
+    //Child writes this
+}
+void TurboView::OnPreRender() {
+    //Child writes this
+}
+void TurboView::Render() {
+    OnPreRender();
+    OnRender();
+    OnPostRender();
+    for (auto child : m_children) {
+        child->OnPrePreRender()
+        child->Render();
+        child->OnPostPreRender()
+    }
+}
+void TurboView::OnRender() {
+    //Child writes this
+}
+void TurboView::OnPostRender() {
+    //Child writes this
+}
+void TurboView::PostPostRender() {
+    OnPostPostRender();
+    for (auto child : m_children) {
+        child->PostPostRender();
+    }
+}
+void TurboView::OnPostPostRender() {
+    //child writes this
+}
+
+//Called by appdelegate in loop
+void TurboView::RenderAll() {
+    //do we need to worry aobut thread safety here? if so we need to lock children
+    PrePreRender(); //PrePreRender on all elements
+    Render(); //PreRender -> Render -> Post Render per element
+    PostPostRender(); //PostPostRender on all elements
+}
+
 void TurboView::AddChild(const std::shared_ptr<TurboView> child) {
     ecco_assert(child == nullptr, "TurboView::AddChild : can not add nullptr child");
     ecco_assert(child->HasParent(), "TurboView::AddChild : can not add child with parent");

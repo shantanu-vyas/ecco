@@ -38,13 +38,16 @@ public:
 
   // TODO margins and padding
 
-  virtual void PrePreRender() = 0; // Runs before any of the objects [Prerender, Render, Postrender] cycle
-  virtual void PreRender() = 0;
-  virtual void Render();
-  virtual void PostRender() = 0;
-  virtual void PostPostRender() = 0; // Runs after all objects [Prerender,
+  void PrePreRender() = final;
+  virtual void OnPrePreRender();
+  virtual void OnPreRender();
+  void Render() = final;
+  virtual void OnRender();
+  virtual void OnPostRender();
+  void PostPostRender() = final;
+  virtual void OnPostPostRender();
                                      // Render, Postrender] cyclex
-
+  void RenderAll() = final;
   void AddChild(const std::shared_ptr<TurboView> child);
   [[nodiscard]] bool HasParent();
   [[nodiscard]] std::weak_ptr<TurboView> GetParent();
@@ -65,6 +68,7 @@ private:
 class RootTurboView : public TurboView {
   virtual bool IsRoot() override { return true; };
   std::weak_ptr<TurboView> GetParent() = delete;
+
 };
 
 
