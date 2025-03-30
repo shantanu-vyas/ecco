@@ -103,17 +103,27 @@ void TestSceneGraph() {
 
 void TestTurboView() {
     std::cout << "Testing Turbo View " << std::endl;
-    std::shared_ptr<ecco::Turbo::TurboView> root = std::make_shared<ecco::Turbo::TurboView>("root");
+    std::shared_ptr<ecco::Turbo::RootTurboView> root = std::make_shared<ecco::Turbo::RootTurboView>("root");
     std::shared_ptr<ecco::Turbo::TurboView> l1Child1 = std::make_shared<ecco::Turbo::TurboView>("L1C1");
     std::shared_ptr<ecco::Turbo::TurboView> l1Child2 = std::make_shared<ecco::Turbo::TurboView>("L1C2");
     std::shared_ptr<ecco::Turbo::TurboView> l2Child1 = std::make_shared<ecco::Turbo::TurboView>("L2C1");
     std::shared_ptr<ecco::Turbo::TurboView> l2Child2 = std::make_shared<ecco::Turbo::TurboView>("L2C2");
 
     root->AddChild(l1Child1);
-    root->AddChild(l1Child2);
+    // root->AddChild(l1Child2);
+    // l1Child1->AddChild(l2Child1);
+    // l1Child1->AddChild(l2Child2);
 
-    l1Child1->AddChild(l2Child1);
-    l1Child1->AddChild(l2Child2);
+
+
+      //Causes cyclic behaviour, the assert on GetParent isn't caling the
+      //RootTurboView->GetParent which is deleted, i don't think you can do this with delete?
+      //instead going to add a root node assert
+    // root->AddChild(l2Child1);
+    // l2Child1->AddChild(root);
+
+    l1Child1->AddChild(l1Child2);
+    l1Child2->AddChild(l1Child1);
 
     root->PrintTree();
 }

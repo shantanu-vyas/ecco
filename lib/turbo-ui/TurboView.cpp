@@ -99,8 +99,8 @@ void TurboView::RenderAll() {
 
 void TurboView::AddChild(const std::shared_ptr<TurboView> child) {
     ecco_assert(child != nullptr, "TurboView::AddChild : can not add nullptr child");
-    ecco_assert(child->HasParent(), "TurboView::AddChild : can not add child with parent");
-
+    ecco_assert(!child->HasParent(), "TurboView::AddChild : can not add child with parent");
+    ecco_assert(!child->IsRoot(), "TurboView::AddChild : can not add root node as a child");
     m_children.emplace_back(child);
 }
 

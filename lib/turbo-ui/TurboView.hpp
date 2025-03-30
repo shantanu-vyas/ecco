@@ -22,7 +22,7 @@ struct Rect {
 class TurboView : public EccoObject,
                   public std::enable_shared_from_this<TurboView> {
 public:
-    TurboView(std::string name);// = delete;
+  TurboView(std::string name);// = delete;
   ~TurboView() = default;
   //Temporarily making this class not virtual so we can test out stuff
     virtual void Initialize() {};// = 0;
@@ -72,8 +72,11 @@ private:
 };
 
 class RootTurboView : public TurboView {
-  virtual bool IsRoot() override { return true; };
-  std::weak_ptr<TurboView> GetParent() = delete;
+    public:
+    RootTurboView(std::string name) : TurboView(name) {};
+    ~RootTurboView() = default;
+    virtual bool IsRoot() override { return true; };
+    virtual std::weak_ptr<TurboView> GetParent() = delete;
 
 };
 

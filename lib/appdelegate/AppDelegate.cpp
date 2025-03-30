@@ -25,8 +25,7 @@ bool ecco::Base::AppDelegate::m_isVsyncEnabled(true);
 std::shared_ptr<GLFWwindow> ecco::Base::AppDelegate::m_glfwWindow = nullptr;
 
 ecco::Base::AppDelegate::AppDelegate() :
-    ecco::EccoObject("APPDELEGATE")
-{
+    ecco::Turbo::RootTurboView("APPDELEGATE") {
     std::cout << "Initializing App Delegate" << std::endl;
     initializeAppDelegate();
 }

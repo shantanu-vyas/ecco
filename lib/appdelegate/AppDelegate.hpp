@@ -3,10 +3,11 @@
 
 #include <GLFW/glfw3.h>
 #include "../ecco/EccoObject.hpp"
+#include "../turbo-ui/TurboView.hpp"
 
 namespace ecco {
     namespace Base {
-        class AppDelegate : public ecco::EccoObject {
+        class AppDelegate : public Turbo::RootTurboView {
             public:
                 AppDelegate(const AppDelegate &) = delete;
                 ~AppDelegate();
