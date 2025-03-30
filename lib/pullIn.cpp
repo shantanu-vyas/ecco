@@ -32,8 +32,10 @@
 
 
 #include "shaderManager/Shader.hpp"
-// #include "shaderManager/ShaderProgram.hpp"
+#include "shaderManager/ShaderProgram.hpp"
 // #include "shaderManager/ShaderProgramManager.hpp"
+
+#include "turbo-ui/TurboView.hpp"
 
 std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager;
 std::shared_ptr<ecco::OpenGL::AttachmentManager> m_attachmentManager;
@@ -41,6 +43,7 @@ std::shared_ptr<ecco::Base::AppDelegate> m_appDelegate;
 
 void TestSceneGraph();
 void InitializeShaders();
+void TestTurboView();
 
 int main()
 {
@@ -56,9 +59,12 @@ int main()
     std::cout << attachment->GetName() << std::endl;
 
     TestSceneGraph();
+    TestTurboView();
 
     ecco::Base::AppDelegate::SetAppName("MY APP");
     m_appDelegate = ecco::Base::AppDelegate::GetInstance();
+
+
 
     m_appDelegate->SetInitializeShadersCB([]() {InitializeShaders();});
 
@@ -93,4 +99,21 @@ void TestSceneGraph() {
     l1Child1->AddChild(l2Child2);
 
     sceneGraph->PrintTree();
+}
+
+void TestTurboView() {
+    std::cout << "Testing Turbo View " << std::endl;
+    std::shared_ptr<ecco::Turbo::TurboView> root = std::make_shared<ecco::Turbo::TurboView>("root");
+    std::shared_ptr<ecco::Turbo::TurboView> l1Child1 = std::make_shared<ecco::Turbo::TurboView>("L1C1");
+    std::shared_ptr<ecco::Turbo::TurboView> l1Child2 = std::make_shared<ecco::Turbo::TurboView>("L1C2");
+    std::shared_ptr<ecco::Turbo::TurboView> l2Child1 = std::make_shared<ecco::Turbo::TurboView>("L2C1");
+    std::shared_ptr<ecco::Turbo::TurboView> l2Child2 = std::make_shared<ecco::Turbo::TurboView>("L2C2");
+
+    root->AddChild(l1Child1);
+    root->AddChild(l1Child2);
+
+    l1Child1->AddChild(l2Child1);
+    l1Child1->AddChild(l2Child2);
+
+    root->PrintTree();
 }

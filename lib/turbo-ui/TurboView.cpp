@@ -1,7 +1,18 @@
 #include "TurboView.hpp"
 #include "../utils/assertMacros.hpp"
+#include "ecco/EccoObject.hpp"
 
 using namespace ecco::Turbo;
+
+TurboView::TurboView(std::string name) :
+    EccoObject(name),
+    m_bounds(0,0,1,1),
+    m_margins(0,0,0,0),
+    m_padding(0,0,0,0),
+    m_parent(std::weak_ptr<TurboView>()),
+    m_children(),
+    m_frameTime(0) {
+}
 
 void TurboView::SetFrame(const Rect &rect) {
     m_bounds = rect;
@@ -57,9 +68,9 @@ void TurboView::Render() {
     OnRender();
     OnPostRender();
     for (auto child : m_children) {
-        child->OnPrePreRender()
+        child->OnPrePreRender();
         child->Render();
-        child->OnPostPreRender()
+        child->OnPostPostRender();
     }
 }
 void TurboView::OnRender() {
@@ -87,10 +98,10 @@ void TurboView::RenderAll() {
 }
 
 void TurboView::AddChild(const std::shared_ptr<TurboView> child) {
-    ecco_assert(child == nullptr, "TurboView::AddChild : can not add nullptr child");
+    ecco_assert(child != nullptr, "TurboView::AddChild : can not add nullptr child");
     ecco_assert(child->HasParent(), "TurboView::AddChild : can not add child with parent");
 
-    m_children->emplace_back(child);
+    m_children.emplace_back(child);
 }
 
 bool TurboView::HasParent() {
@@ -104,4 +115,13 @@ bool TurboView::IsRoot() {
 }
 void TurboView::SetOnResizeCBFunction(const std::function<void(void)> &func) {
     m_onResizeCB = func;
+}
+
+void TurboView::PrintTree(int depth) {
+    for (size_t i = 0; i < depth; ++i)
+        std::cout << "  ";
+
+    std::cout << GetName() << std::endl;
+    for (auto child : m_children)
+        child->PrintTree(depth+1);
 }

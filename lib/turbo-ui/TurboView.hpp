@@ -22,10 +22,11 @@ struct Rect {
 class TurboView : public EccoObject,
                   public std::enable_shared_from_this<TurboView> {
 public:
-   TurboView(std::string name) = delete;
+    TurboView(std::string name);// = delete;
   ~TurboView() = default;
-  virtual void Initialize() = 0;
-  virtual void DeInitialize() = 0;
+  //Temporarily making this class not virtual so we can test out stuff
+    virtual void Initialize() {};// = 0;
+    virtual void DeInitialize() {};// = 0;
 
   // how can i variant this to be either a (float,float,float,float), Rect
   void SetFrame(const Rect &rect);
@@ -38,23 +39,28 @@ public:
 
   // TODO margins and padding
 
-  void PrePreRender() = final;
   virtual void OnPrePreRender();
   virtual void OnPreRender();
-  void Render() = final;
+
   virtual void OnRender();
   virtual void OnPostRender();
-  void PostPostRender() = final;
   virtual void OnPostPostRender();
                                      // Render, Postrender] cyclex
-  void RenderAll() = final;
+
   void AddChild(const std::shared_ptr<TurboView> child);
   [[nodiscard]] bool HasParent();
   [[nodiscard]] std::weak_ptr<TurboView> GetParent();
   virtual bool IsRoot();
   void SetOnResizeCBFunction(const std::function<void(void)>& func);
 
+  void PrintTree(int depth = 0);
 private:
+  void PrePreRender();
+  void Render();
+  void PostPostRender();
+  void RenderAll();
+
+
   Rect m_bounds;
   Rect m_margins;
   Rect m_padding;
