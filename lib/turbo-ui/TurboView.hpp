@@ -50,6 +50,7 @@ public:
   void AddChild(const std::shared_ptr<TurboView> child);
   [[nodiscard]] virtual bool HasParent();
   [[nodiscard]] std::weak_ptr<TurboView> GetParent();
+  void SetParent(std::shared_ptr<TurboView> parent);
   virtual bool IsRoot();
   void SetOnResizeCBFunction(const std::function<void(void)>& func);
 

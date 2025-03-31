@@ -132,6 +132,9 @@ void TurboView::AddChild(const std::shared_ptr<TurboView> child) {
     ecco_assert(child != nullptr, "TurboView::AddChild : can not add nullptr child");
     ecco_assert(!child->HasParent(), "TurboView::AddChild : can not add child with parent");
     ecco_assert(!child->IsRoot(), "TurboView::AddChild : can not add root node as a child");
+    ecco_assert(child != m_parent.lock(), "TurboView::AddChild : No Marty Mcflying this");
+
+    child->SetParent(this->shared_from_this());
     m_children.emplace_back(child);
 }
 
@@ -141,6 +144,12 @@ bool TurboView::HasParent() {
 std::weak_ptr<TurboView> TurboView::GetParent() {
     return m_parent.lock();
 }
+
+void TurboView::SetParent(std::shared_ptr<TurboView> parent) {
+    ecco_assert(!HasParent(), "TurboView::SetParent : View has parent alreadyx");
+    m_parent = parent;
+}
+
 bool TurboView::IsRoot() {
     return false;
 }
