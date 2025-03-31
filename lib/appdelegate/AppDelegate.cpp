@@ -18,9 +18,9 @@ std::string ecco::Base::AppDelegate::m_appName("APP");
 
 bool ecco::Base::AppDelegate::m_isMainLoopRunning(true);
 bool ecco::Base::AppDelegate::m_shouldExit(false);
-int ecco::Base::AppDelegate::m_targetFramerate(60);
+int ecco::Base::AppDelegate::m_targetFramerate(1);
 double ecco::Base::AppDelegate::m_targetFrameTime(1.0 / m_targetFramerate);
-bool ecco::Base::AppDelegate::m_isVsyncEnabled(true);
+bool ecco::Base::AppDelegate::m_isVsyncEnabled(false);
 
 std::shared_ptr<GLFWwindow> ecco::Base::AppDelegate::m_glfwWindow = nullptr;
 
@@ -147,7 +147,6 @@ void ecco::Base::AppDelegate::initializeAppDelegate() {
     glewInit();
 }
 
-
 void ecco::Base::AppDelegate::mainLoop() {
 
     // double currentTargetFrameTime;
@@ -168,6 +167,7 @@ void ecco::Base::AppDelegate::mainLoop() {
 
         // gameUpdate(deltaTime);  // Update game logic
         // render();               // Render frame
+        m_singleton->RenderAll();
 
         glfwSwapBuffers(m_glfwWindow.get());
         glfwPollEvents();

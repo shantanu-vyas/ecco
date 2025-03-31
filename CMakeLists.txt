@@ -58,6 +58,7 @@ set(HEADERS
     ./lib/appdelegate/AppDelegate.hpp
 
     ./lib/turbo-ui/TurboView.hpp
+    ./lib/turbo-ui/PrePostTestView.hpp
 )
 
 # Define source files for the static library
@@ -72,6 +73,7 @@ set(SOURCES
     ./lib/shaderManager/Shader.cpp
 
     ./lib/turbo-ui/TurboView.cpp
+    ./lib/turbo-ui/PrePostTestView.cpp
 )
 
 # Set build directory

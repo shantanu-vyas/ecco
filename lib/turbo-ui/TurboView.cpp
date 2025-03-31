@@ -120,18 +120,29 @@ void TurboView::OnPostPostRender() {
  * 2)
  */
 void RootTurboView::RenderAll() {
+#if DEBUG
     std::cout << GetName() << " : RenderAll" << std::endl;
+#endif
     //do we need to worry aobut thread safety here? if so we need to lock children
     PrePreRender(); //PrePreRender on allx elements
     Render(); //PreRender -> Render -> Post Render per element
     PostPostRender();
-    //PostPostRender on all elements
+
+#if DEBUG
+    std::cout << "\n" << std::endl;
+#endif
 }
 
+
 void TurboView::AddChild(const std::shared_ptr<TurboView> child) {
+    std::cout << GetName() << std::endl;
+    std::cout << HasParent() << std::endl;
+
+
     ecco_assert(child != nullptr, "TurboView::AddChild : can not add nullptr child");
     ecco_assert(!child->HasParent(), "TurboView::AddChild : can not add child with parent");
     ecco_assert(!child->IsRoot(), "TurboView::AddChild : can not add root node as a child");
+
     ecco_assert(child != m_parent.lock(), "TurboView::AddChild : No Marty Mcflying this");
 
     child->SetParent(this->shared_from_this());
