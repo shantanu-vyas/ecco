@@ -109,21 +109,25 @@ void TestTurboView() {
     std::shared_ptr<ecco::Turbo::TurboView> l2Child1 = std::make_shared<ecco::Turbo::TurboView>("L2C1");
     std::shared_ptr<ecco::Turbo::TurboView> l2Child2 = std::make_shared<ecco::Turbo::TurboView>("L2C2");
 
+    //renders are too many called getting called more than it should
+    //something is funky with the hasparent assert, if ! it works for this but it breaks the root cycle case i think
+
+
     root->AddChild(l1Child1);
     // root->AddChild(l1Child2);
     // l1Child1->AddChild(l2Child1);
     // l1Child1->AddChild(l2Child2);
 
-
-
-      //Causes cyclic behaviour, the assert on GetParent isn't caling the
-      //RootTurboView->GetParent which is deleted, i don't think you can do this with delete?
-      //instead going to add a root node assert
+    root->RenderAll();
+    //Add Root as child test
     // root->AddChild(l2Child1);
     // l2Child1->AddChild(root);
 
-    l1Child1->AddChild(l1Child2);
-    l1Child2->AddChild(l1Child1);
+    //Cyclic Test
+    // l1Child1->AddChild(l1Child2);
+    // l1Child2->AddChild(l1Child1);
 
     root->PrintTree();
+
+
 }

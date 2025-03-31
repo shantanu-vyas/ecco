@@ -48,17 +48,18 @@ public:
                                      // Render, Postrender] cyclex
 
   void AddChild(const std::shared_ptr<TurboView> child);
-  [[nodiscard]] bool HasParent();
+  [[nodiscard]] virtual bool HasParent();
   [[nodiscard]] std::weak_ptr<TurboView> GetParent();
   virtual bool IsRoot();
   void SetOnResizeCBFunction(const std::function<void(void)>& func);
 
   void PrintTree(int depth = 0);
+
+
 private:
   void PrePreRender();
   void Render();
   void PostPostRender();
-  void RenderAll();
 
 
   Rect m_bounds;
@@ -69,6 +70,13 @@ private:
   float m_frameTime; // this shold be a chrono type
 
   std::function<void(void)> m_onResizeCB;
+
+
+  //PrePreRender, Render, PostPostRender need to be in TurboView but private
+  //a child should never inherit from it
+  //However due to the nature of wanting RootTurboView to be the only thing that can call
+  //render all it needs access to those priv funcs..
+  friend class RootTurboView;
 };
 
 class RootTurboView : public TurboView {
@@ -77,6 +85,9 @@ class RootTurboView : public TurboView {
     ~RootTurboView() = default;
     virtual bool IsRoot() override { return true; };
     virtual std::weak_ptr<TurboView> GetParent() = delete;
+    virtual bool HasParent() override { return false; };
+    virtual void RenderAll() final;
+
 
 };
 

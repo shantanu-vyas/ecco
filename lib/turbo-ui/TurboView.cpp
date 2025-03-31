@@ -4,6 +4,8 @@
 
 using namespace ecco::Turbo;
 
+#define DEBUG 1
+
 TurboView::TurboView(std::string name) :
     EccoObject(name),
     m_bounds(0,0,1,1),
@@ -53,48 +55,77 @@ void TurboView::SetHeight(float h) {
  * */
 
 void TurboView::PrePreRender() {
+#if DEBUG
+    std::cout << GetName() << " : PrePreRender" << std::endl;
+#endif
+
     OnPrePreRender();
     for (auto child : m_children)
         child->PrePreRender();
 }
 void TurboView::OnPrePreRender() {
+#if DEBUG
+    std::cout << GetName() << " : OnPrePreRender" << std::endl;
+#endif
     //Child writes this
 }
 void TurboView::OnPreRender() {
+#if DEBUG
+    std::cout << GetName() << " : OnPreRender" << std::endl;
+#endif
     //Child writes this
 }
 void TurboView::Render() {
+#if DEBUG
+    std::cout << GetName() << " : Render Node" << std::endl;
+#endif
     OnPreRender();
     OnRender();
     OnPostRender();
     for (auto child : m_children) {
-        child->OnPrePreRender();
         child->Render();
-        child->OnPostPostRender();
     }
 }
 void TurboView::OnRender() {
+#if DEBUG
+    std::cout << GetName() << " : OnRender" << std::endl;
+#endif
     //Child writes this
 }
 void TurboView::OnPostRender() {
+#if DEBUG
+    std::cout << GetName() << " : OnPostRender" << std::endl;
+#endif
     //Child writes this
 }
 void TurboView::PostPostRender() {
+#if DEBUG
+    std::cout << GetName() << " : PostPostRender" << std::endl;
+#endif
     OnPostPostRender();
     for (auto child : m_children) {
         child->PostPostRender();
     }
 }
 void TurboView::OnPostPostRender() {
+#if DEBUG
+    std::cout << GetName() << " : OnPostPostRender" << std::endl;
+#endif
     //child writes this
 }
 
-//Called by appdelegate in loop
-void TurboView::RenderAll() {
+//figure this out
+/**
+ * 1) i want only a root node to be able to call render all
+ * 2)
+ */
+void RootTurboView::RenderAll() {
+    std::cout << GetName() << " : RenderAll" << std::endl;
     //do we need to worry aobut thread safety here? if so we need to lock children
-    PrePreRender(); //PrePreRender on all elements
+    PrePreRender(); //PrePreRender on allx elements
     Render(); //PreRender -> Render -> Post Render per element
-    PostPostRender(); //PostPostRender on all elements
+    PostPostRender();
+    //PostPostRender on all elements
 }
 
 void TurboView::AddChild(const std::shared_ptr<TurboView> child) {
@@ -105,7 +136,7 @@ void TurboView::AddChild(const std::shared_ptr<TurboView> child) {
 }
 
 bool TurboView::HasParent() {
-    return m_parent.lock() == nullptr;
+    return m_parent.lock() != nullptr;
 }
 std::weak_ptr<TurboView> TurboView::GetParent() {
     return m_parent.lock();
