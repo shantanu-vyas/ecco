@@ -45,8 +45,7 @@ public:
   virtual void OnRender();
   virtual void OnPostRender();
   virtual void OnPostPostRender();
-                                     // Render, Postrender] cyclex
-
+                                     // Render, Postrender] cyclexa
   void AddChild(const std::shared_ptr<TurboView> child);
   [[nodiscard]] virtual bool HasParent();
   [[nodiscard]] std::weak_ptr<TurboView> GetParent();

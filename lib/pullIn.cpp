@@ -113,10 +113,10 @@ void TestTurboView() {
     //something is funky with the hasparent assert, if ! it works for this but it breaks the root cycle case i think
 
 
-    // root->AddChild(l1Child1);
-    // root->AddChild(l1Child2);
-    // l1Child1->AddChild(l2Child1);
-    // l1Child1->AddChild(l2Child2);
+    root->AddChild(l1Child1);
+    root->AddChild(l1Child2);
+    l1Child1->AddChild(l2Child1);
+    l1Child1->AddChild(l2Child2);
 
     // root->RenderAll();
     //Add Root as child test
@@ -124,8 +124,8 @@ void TestTurboView() {
     // l2Child1->AddChild(root);
 
     //Cyclic Test
-    l1Child1->AddChild(l1Child2);
-    l1Child2->AddChild(l1Child1);
+    // l1Child1->AddChild(l1Child2);
+    // l1Child2->AddChild(l1Child1);
 
     // l1Child1->PrintTree();
     root->PrintTree();
