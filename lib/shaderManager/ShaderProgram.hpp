@@ -1,8 +1,11 @@
 #ifndef SHADER_PROGRAM
 #define SHADER_PROGRAM
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+
 #include "../ecco/EccoProduct.hpp"
-#include "Shader.hpp"
+// #include "Shader.hpp"
 // #include "Shader.hpp"
 #include <memory>
 #include <variant>
@@ -38,10 +41,17 @@ class ShaderProgram : public ecco::EccoProduct,
 
   bool linkShaders();
 
-  ShaderProgram(std::string name,
-                std::variant<std::shared_ptr<Shader>, const std::vector<std::shared_ptr<Shader>>&> vertexShaders,
-                std::variant<std::shared_ptr<Shader>, const std::vector<std::shared_ptr<Shader>>&> fragShaders,
-                std::variant<std::shared_ptr<Shader>, const std::vector<std::shared_ptr<Shader>>&> geometryShaders);
+  public:
+    ShaderProgram(std::string name,
+                std::variant<std::shared_ptr<Shader>, const std::vector<std::shared_ptr<Shader>>> vertexShaders,
+                std::variant<std::shared_ptr<Shader>, const std::vector<std::shared_ptr<Shader>>> fragShaders,
+                std::variant<std::shared_ptr<Shader>, const std::vector<std::shared_ptr<Shader>>> geometryShaders);
+
+    ShaderProgram(std::string name,
+                std::variant<std::shared_ptr<Shader>, const std::vector<std::shared_ptr<Shader>>> vertexShaders,
+                std::variant<std::shared_ptr<Shader>, const std::vector<std::shared_ptr<Shader>>> fragShaders);
+
+
   private:
     GLuint m_shaderProgramID;
     bool m_isLinked;

@@ -68,6 +68,7 @@ set(SOURCES
     ./lib/glWrappers/AttachmentManager.cpp
     ./lib/appdelegate/AppDelegate.cpp
     ./lib/shaderManager/Shader.cpp
+    ./lib/shaderManager/ShaderProgram.cpp
 )
 
 # Set build directory

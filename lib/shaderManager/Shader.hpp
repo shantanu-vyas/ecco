@@ -35,7 +35,7 @@ public:
 
   bool GetIsLoaded() const;
   bool GetIsCompiled() const;
-  std::vector<std::weak_ptr<ShaderProgram>> GetAttachedShaderPrograms() const;
+  std::vector<std::weak_ptr<ecco::OpenGL::ShaderProgram>> GetAttachedShaderPrograms() const;
   std::string GetCompileLog() const;
   ShaderType GetShaderType() const;
 
@@ -58,8 +58,8 @@ public:
   // Only ShaderManager and ShaderProgram should be able to call these
   [[nodiscard]] GLuint GetShaderID() const;
   [[nodiscard]] bool ReloadFromFile();
-  bool AddShaderProgramUsage(std::shared_ptr<ShaderProgram> program);
-  bool RemoveShaderProgramUsage(std::shared_ptr<ShaderProgram> program);
+  bool AddShaderProgramUsage(std::shared_ptr<ecco::OpenGL::ShaderProgram> program);
+  bool RemoveShaderProgramUsage(std::shared_ptr<ecco::OpenGL::ShaderProgram> program);
 
   void GetOrCreate(const std::string &name,
                    ShaderType shaderType,
@@ -77,7 +77,7 @@ private:
   GLuint m_shaderID = 0;
   bool m_isLoaded = false;
   bool m_isCompiled = false;
-  std::vector<std::weak_ptr<ShaderProgram>> m_attachedShaderProgams;
+  std::vector<std::weak_ptr<ecco::OpenGL::ShaderProgram>> m_attachedShaderProgams;
   std::string m_compileLog;
   ShaderType m_shaderType = ST_None;
   std::string m_source;

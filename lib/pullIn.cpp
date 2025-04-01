@@ -32,7 +32,7 @@
 
 
 #include "shaderManager/Shader.hpp"
-// #include "shaderManager/ShaderProgram.hpp"
+#include "shaderManager/ShaderProgram.hpp"
 // #include "shaderManager/ShaderProgramManager.hpp"
 
 std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager;
@@ -70,10 +70,19 @@ int main()
 void InitializeShaders() {
     ecco::OpenGL::Shader::SetShaderLoadDir("../shaders/general/");
 
-    auto shader = ecco::OpenGL::Shader("Vertex", "vert-Vertex.glsl", ecco::OpenGL::ST_Vertex);
-    std::cout << shader.GetCompileLog() << std::endl;
-    std::cout << "Shader Loaded: " << shader.GetIsLoaded() << std::endl;
-    std::cout << "Shader Compilation: " << shader.GetIsCompiled() << std::endl;
+    auto vshader = std::make_shared<ecco::OpenGL::Shader>("Vertex", "vert-Vertex.glsl", ecco::OpenGL::ST_Vertex);
+    auto fshader = std::make_shared<ecco::OpenGL::Shader>("Fragment", "frag-Frag.glsl", ecco::OpenGL::ST_Fragment);
+    std::cout << "Vertex" << std::endl;
+    std::cout << vshader->GetCompileLog() << std::endl;
+    std::cout << "Shader Loaded: " << vshader->GetIsLoaded() << std::endl;
+    std::cout << "Shader Compilation: " << vshader->GetIsCompiled() << std::endl;
+    std::cout << "Fragment" << std::endl;
+    std::cout << fshader->GetCompileLog() << std::endl;
+    std::cout << "Shader Loaded: " << fshader->GetIsLoaded() << std::endl;
+    std::cout << "Shader Compilation: " << fshader->GetIsCompiled() << std::endl;
+
+    std::vector<std::shared_ptr<ecco::OpenGL::Shader>> geom;
+    auto shaderProgram = std::make_shared<ecco::OpenGL::ShaderProgram>("Shader", vshader, fshader, geom);
 }
 
 void TestSceneGraph() {
