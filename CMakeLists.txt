@@ -56,6 +56,9 @@ set(HEADERS
     ./lib/ecco/EccoObject.hpp
     ./lib/ecco/EccoOutcome.hpp
     ./lib/appdelegate/AppDelegate.hpp
+
+    ./lib/turbo-ui/TurboView.hpp
+    ./lib/turbo-ui/PrePostTestView.hpp
 )
 
 # Define source files for the static library
@@ -69,6 +72,9 @@ set(SOURCES
     ./lib/appdelegate/AppDelegate.cpp
     ./lib/shaderManager/Shader.cpp
     ./lib/shaderManager/ShaderProgram.cpp
+    ./lib/turbo-ui/TurboView.cpp
+    ./lib/turbo-ui/PrePostTestView.cpp
+
 )
 
 # Set build directory
