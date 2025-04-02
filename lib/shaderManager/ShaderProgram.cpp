@@ -62,9 +62,11 @@ ShaderProgram::ShaderProgram(std::string name,
 
     //run this lambda against all 3 vectoru
     auto checker = [this](std::vector<std::shared_ptr<Shader>> shaders,  ShaderType type) -> void {
-        for (const auto& shader : shaders)
-            ecco_assert(shader->GetShaderType() != type, "Non valid shader type for (use magic enum to convert to string)" );
+        for (const auto& shader : shaders) {
+            ecco_assert(shader->GetShaderType() == type, "Non valid shader type for (use magic enum to convert to string)" );
+        }
     };
+
     checker(m_vertexShaders, ST_Vertex);
     checker(m_fragShaders, ST_Fragment);
     checker(m_geometryShaders, ST_Geometry);
