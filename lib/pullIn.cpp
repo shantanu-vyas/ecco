@@ -148,15 +148,25 @@ void TestTurboView() {
 void TestEventSystem() {
     std::cout << "Testing Events" << std::endl;
     ecco::Event::EventDispatcher m_globalDispatcher("0");
-    m_globalDispatcher.subscribe<ecco::Event::KeyEvent>([](const ecco::Event::KeyEvent& event){
-        std::cout << "Global Dispatcher got key event"  << std::endl;
-    });
+    // m_globalDispatcher.SetEventCallback<ecco::Event::KeyEvent>([](const ecco::Event::KeyEvent& event){
+    //     std::cout << "Global Dispatcher got key event"  << std::endl;
+    // });
 
     ecco::Event::EventDispatcher m_uiElement1Dispatcher("1");
-    m_uiElement1Dispatcher.subscribe<ecco::Event::EccoEvent>([](const ecco::Event::EccoEvent& event) {
-        std::cout << "UI element got event 1" << std::endl;
+    m_uiElement1Dispatcher.SetEventCallback<ecco::Event::KeyEvent>([](const ecco::Event::EccoEvent& event) {
+        std::cout << "1) UI element got event 1" << std::endl;
     });
 
+    ecco::Event::EventDispatcher m_uiElement1Dispatcher2("1");
+    m_uiElement1Dispatcher2.SetEventCallback<ecco::Event::KeyEvent>([](const ecco::Event::EccoEvent& event) {
+        std::cout << "2) UI element got event 1" << std::endl;
+    });
+
+    m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher);
+    m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher2);
+    m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
+    m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
+    m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
     m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
 
     exit(0);

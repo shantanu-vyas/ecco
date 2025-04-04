@@ -17,27 +17,27 @@ class EventDispatcher : public ecco::EccoObject {
         ~EventDispatcher() = default;
 
         template<typename EventType>
-        void subscribe(HandlerFunc<EventType> handler) {
+        void SetEventCallback(HandlerFunc<EventType> handler) {
             auto type = std::type_index(typeid(EventType));
+
             auto wrapper = [handler](const EccoEvent& event) {
                 handler(static_cast<const EventType&>(event));
             };
-            m_handlers[type].emplace_back(std::move(wrapper));
-        };
-
-
+            m_singleHandlers[type] = std::move(wrapper);
+        }
 
         template<typename EventType>
-        std::function<void(const EccoEvent&)> GetTypeHandler() {
+        std::function<void(const EccoEvent&)> GetTypeHandler() const {
             auto type = std::type_index(typeid(EventType));
-            return m_handlers[type];
+            return m_singleHandlers.at(type);
         }
 
         template<typename EventType>
         void AddListener(const EventDispatcher& ed) {
             auto type = std::type_index(typeid(EventType));
-            m_handlers[type].emplace_back(ed.GetTypeHandler<type>());
+            m_handlers[type].emplace_back(ed.GetTypeHandler<EventType>());
         }
+
 
         void dispatch(const EccoEvent& event) const {
             auto type = std::type_index(typeid(event));
@@ -49,6 +49,9 @@ class EventDispatcher : public ecco::EccoObject {
         };
 
         private:
+        //My handler functions for events
+        std::unordered_map<std::type_index, std::function<void(const EccoEvent&)>> m_singleHandlers;
+        //Other dispatchers that are listening for my events
         std::unordered_map<std::type_index, std::vector<std::function<void(const EccoEvent&)>>> m_handlers;
 };
 } // namespace Event
