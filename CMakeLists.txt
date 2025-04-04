@@ -59,6 +59,9 @@ set(HEADERS
 
     ./lib/turbo-ui/TurboView.hpp
     ./lib/turbo-ui/PrePostTestView.hpp
+
+    ./lib/eventSystem/EccoEvent.hpp
+    ./lib/eventSystem/EventDispatcher.hpp
 )
 
 # Define source files for the static library

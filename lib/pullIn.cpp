@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <memory>
 // #include "assetLoaders/ImageLoader.hpp"
@@ -38,6 +37,9 @@
 #include "turbo-ui/TurboView.hpp"
 #include "turbo-ui/PrePostTestView.hpp"
 
+#include "eventSystem/EccoEvent.hpp"
+#include "eventSystem/EventDispatcher.hpp"
+
 std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager;
 std::shared_ptr<ecco::OpenGL::AttachmentManager> m_attachmentManager;
 std::shared_ptr<ecco::Base::AppDelegate> m_appDelegate;
@@ -45,9 +47,11 @@ std::shared_ptr<ecco::Base::AppDelegate> m_appDelegate;
 void TestSceneGraph();
 void InitializeShaders();
 void TestTurboView();
+void TestEventSystem();
 
 int main()
 {
+    TestEventSystem();
     // std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
 
     m_fboManager = ecco::OpenGL::FrameBufferManager::GetInstance();
@@ -66,6 +70,9 @@ int main()
     m_appDelegate = ecco::Base::AppDelegate::GetInstance();
     m_appDelegate->SetInitializeShadersCB([]() {InitializeShaders();});
     TestTurboView();
+
+
+
     m_appDelegate->Run();
 
 
@@ -136,6 +143,27 @@ void TestTurboView() {
 
     // l1Child1->PrintTree();
     // m_appDelegate->PrintTree();
+}
 
+void TestEventSystem() {
+    std::cout << "Testing Events" << std::endl;
+    ecco::Event::EventDispatcher m_globalDispatcher("0");
+    m_globalDispatcher.subscribe<ecco::Event::KeyEvent>([](const ecco::Event::KeyEvent& event){
+        std::cout << "Global Dispatcher got key event"  << std::endl;
+    });
+
+    ecco::Event::EventDispatcher m_uiElement1Dispatcher("1");
+    m_uiElement1Dispatcher.subscribe<ecco::Event::EccoEvent>([](const ecco::Event::EccoEvent& event) {
+        std::cout << "UI element got event 1" << std::endl;
+    });
+
+    m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
+
+    exit(0);
+    //fuck issue with this is event handlers cant be shared globally
+    //Option 1: Global event handler dispatches events, UIElement dispatches to global, global dispatches to everything else {
+    //Option 2: typing shit together kind of like binds, i might opt for this
+    //each view has a Dispatcher with registers events with other ui elements
+    //in main.cpp we would have uiElement1.Register(uiElement1, EVENTTYPEx)
 
 }
