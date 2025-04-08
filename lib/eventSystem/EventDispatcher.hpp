@@ -8,6 +8,7 @@
 
 namespace ecco {
 namespace Event {
+
 class EventDispatcher : public ecco::EccoObject {
     public:
         template<typename EventType>
@@ -20,7 +21,7 @@ class EventDispatcher : public ecco::EccoObject {
         void SetEventCallback(HandlerFunc<EventType> handler) {
             auto type = std::type_index(typeid(EventType));
 
-            auto wrapper = [handler](const EccoEvent& event) {
+            auto wrapper = [handler](const ecco::Event::EccoEvent& event) {
                 handler(static_cast<const EventType&>(event));
             };
             m_singleHandlers[type] = std::move(wrapper);
@@ -39,7 +40,7 @@ class EventDispatcher : public ecco::EccoObject {
         }
 
 
-        void dispatch(const EccoEvent& event) const {
+        void dispatch(const ecco::Event::EccoEvent& event) const {
             auto type = std::type_index(typeid(event));
             if (m_handlers.count(type)) {
                 for (auto& handler : m_handlers.at(type)) {
@@ -47,6 +48,16 @@ class EventDispatcher : public ecco::EccoObject {
                 }
             }
         };
+
+        std::string PrintListenInfo() const {
+
+        }
+        std::string PrintDispatchInfo() const {
+
+        }
+        std::string PrintInfo() const {
+
+        }
 
         private:
         //My handler functions for events

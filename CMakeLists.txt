@@ -77,7 +77,7 @@ set(SOURCES
     ./lib/shaderManager/ShaderProgram.cpp
     ./lib/turbo-ui/TurboView.cpp
     ./lib/turbo-ui/PrePostTestView.cpp
-
+    ./lib/eventSystem/EccoEvent.cpp
 )
 
 # Set build directory

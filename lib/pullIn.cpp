@@ -162,18 +162,11 @@ void TestEventSystem() {
         std::cout << "2) UI element got event 1" << std::endl;
     });
 
-    m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher);
-    m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher2);
-    m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
-    m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
-    m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
-    m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
-
+    // m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher);
+    // m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher2);
+    // m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
+    // m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
+    // m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
+    // m_globalDispatcher.dispatch(ecco::Event::KeyEvent());1
     exit(0);
-    //fuck issue with this is event handlers cant be shared globally
-    //Option 1: Global event handler dispatches events, UIElement dispatches to global, global dispatches to everything else {
-    //Option 2: typing shit together kind of like binds, i might opt for this
-    //each view has a Dispatcher with registers events with other ui elements
-    //in main.cpp we would have uiElement1.Register(uiElement1, EVENTTYPEx)
-
 }
