@@ -12,6 +12,6 @@ KeyEvent::KeyEvent(std::string descriptor, const ModList &modIDs,
                    const KeyList &keyIds)
     : EccoEvent(descriptor), m_modIDs(modIDs), m_keyIDS(keyIds) {}
 
-const std::tuple<const ModList&, const KeyList&> KeyEvent::GetData() {
-      return std::make_tuple<const ModList&, const KeyEvent&>(m_modIDs, m_keyIDS);
+const std::tuple<const KeyEvent::ModList&, const KeyEvent::KeyList&> KeyEvent::GetData() {
+  return std::make_tuple<const KeyEvent::ModList&, const KeyEvent::KeyList&>(m_modIDs, m_keyIDS);
 }

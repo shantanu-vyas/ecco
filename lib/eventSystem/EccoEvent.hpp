@@ -1,9 +1,11 @@
 #ifndef ECCO_EVENT
 #define ECCO_EVENT
 
-#include "ecco/EccoObject.hpp"
-#include "eventSystem/EventDispatcher.hpp"
 #include <tuple>
+#include <string>
+#include <vector>
+
+//when i accidentally included dispatcher in here the dispatcher file was unable to find eccoevent??
 
 namespace ecco {
 namespace Event {
@@ -21,9 +23,10 @@ private:
 };
 
 class KeyEvent : public EccoEvent {
+  public:
+    //these should be like GLFW keys...
     using ModList = std::vector<int>;
     using KeyList = std::vector<int>;
-public:
   KeyEvent(std::string descriptor,
            const ModList &modIDs,
            const KeyList &keyIds);

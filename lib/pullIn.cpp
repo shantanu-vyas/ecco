@@ -51,7 +51,7 @@ void TestEventSystem();
 
 int main()
 {
-    TestEventSystem();
+
     // std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
 
     m_fboManager = ecco::OpenGL::FrameBufferManager::GetInstance();
@@ -64,15 +64,12 @@ int main()
     std::cout << attachment->GetName() << std::endl;
 
     TestSceneGraph();
-
+    TestEventSystem();
 
     ecco::Base::AppDelegate::SetAppName("MY APP");
     m_appDelegate = ecco::Base::AppDelegate::GetInstance();
     m_appDelegate->SetInitializeShadersCB([]() {InitializeShaders();});
     TestTurboView();
-
-
-
     m_appDelegate->Run();
 
 
@@ -162,11 +159,11 @@ void TestEventSystem() {
         std::cout << "2) UI element got event 1" << std::endl;
     });
 
-    // m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher);
-    // m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher2);
-    // m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
-    // m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
-    // m_globalDispatcher.dispatch(ecco::Event::KeyEvent());
-    // m_globalDispatcher.dispatch(ecco::Event::KeyEvent());1
-    exit(0);
+
+    m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher);
+    m_globalDispatcher.AddListener<ecco::Event::KeyEvent>(m_uiElement1Dispatcher2);
+    ecco::Event::KeyEvent::ModList mods;
+    ecco::Event::KeyEvent::KeyList keys;
+    m_globalDispatcher.dispatch(ecco::Event::KeyEvent("Key", mods, keys));
+
 }

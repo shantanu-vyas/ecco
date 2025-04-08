@@ -3,6 +3,7 @@
 
 #include "ecco/EccoObject.hpp"
 #include "eventSystem/EccoEvent.hpp"
+#include <sstream>
 #include <typeindex>
 #include <unordered_map>
 
@@ -11,6 +12,7 @@ namespace Event {
 
 class EventDispatcher : public ecco::EccoObject {
     public:
+
         template<typename EventType>
         using HandlerFunc = std::function<void(const EventType)>;
 
@@ -41,6 +43,9 @@ class EventDispatcher : public ecco::EccoObject {
 
 
         void dispatch(const ecco::Event::EccoEvent& event) const {
+            //maybe change handler func so it also takes in a const ref
+            //to a EventDispacher thats dispatching so the handle func can
+            //print the source of the event for debugging?
             auto type = std::type_index(typeid(event));
             if (m_handlers.count(type)) {
                 for (auto& handler : m_handlers.at(type)) {
@@ -49,14 +54,16 @@ class EventDispatcher : public ecco::EccoObject {
             }
         };
 
+        //add listener would give us the data
+        //maybe event could have a source and destination weakptr to an event dispatcher?
         std::string PrintListenInfo() const {
-
+            //NYI -> it would be cool to print all known sources/origins of the event
         }
         std::string PrintDispatchInfo() const {
-
+            //NYI -> print all known destinations?
         }
         std::string PrintInfo() const {
-
+            //NYI
         }
 
         private:
