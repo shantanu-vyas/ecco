@@ -26,19 +26,19 @@ class EventDispatcher : public ecco::EccoObject {
             auto wrapper = [handler](const ecco::Event::EccoEvent& event) {
                 handler(static_cast<const EventType&>(event));
             };
-            m_singleHandlers[type] = std::move(wrapper);
+            m_eventCallbacks[type] = std::move(wrapper);
         }
 
         template<typename EventType>
         std::function<void(const EccoEvent&)> GetTypeHandler() const {
             auto type = std::type_index(typeid(EventType));
-            return m_singleHandlers.at(type);
+            return m_eventCallbacks.at(type);
         }
 
         template<typename EventType>
         void AddListener(const EventDispatcher& ed) {
             auto type = std::type_index(typeid(EventType));
-            m_handlers[type].emplace_back(ed.GetTypeHandler<EventType>());
+            m_dispatchLocations[type].emplace_back(ed.GetTypeHandler<EventType>());
         }
 
 
@@ -47,8 +47,8 @@ class EventDispatcher : public ecco::EccoObject {
             //to a EventDispacher thats dispatching so the handle func can
             //print the source of the event for debugging?
             auto type = std::type_index(typeid(event));
-            if (m_handlers.count(type)) {
-                for (auto& handler : m_handlers.at(type)) {
+            if (m_dispatchLocations.count(type)) {
+                for (auto& handler : m_dispatchLocations.at(type)) {
                     handler(event);
                 }
             }
@@ -57,6 +57,8 @@ class EventDispatcher : public ecco::EccoObject {
         //add listener would give us the data
         //maybe event could have a source and destination weakptr to an event dispatcher?
         std::string PrintListenInfo() const {
+            std::stringstream ss;
+
             //NYI -> it would be cool to print all known sources/origins of the event
         }
         std::string PrintDispatchInfo() const {
@@ -68,9 +70,9 @@ class EventDispatcher : public ecco::EccoObject {
 
         private:
         //My handler functions for events
-        std::unordered_map<std::type_index, std::function<void(const EccoEvent&)>> m_singleHandlers;
+        std::unordered_map<std::type_index, std::function<void(const EccoEvent&)>> m_eventCallbacks;
         //Other dispatchers that are listening for my events
-        std::unordered_map<std::type_index, std::vector<std::function<void(const EccoEvent&)>>> m_handlers;
+        std::unordered_map<std::type_index, std::vector<std::function<void(const EccoEvent&)>>> m_dispatchLocations;
 };
 } // namespace Event
 } // namespace ecco

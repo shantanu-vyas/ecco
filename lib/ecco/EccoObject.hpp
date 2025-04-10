@@ -24,8 +24,8 @@ namespace ecco
             EccoObject() = delete;
             EccoObject(EccoObject&) = delete;
             ~EccoObject();
-            std::string GetName() {return m_name; };
-            std::string GetUUID();
+            std::string GetName() const { return m_name; };
+            boost::uuids::uuid GetUUID() const { return m_uuid; };
 
         private:
             boost::uuids::uuid m_uuid;
