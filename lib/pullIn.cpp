@@ -27,6 +27,7 @@
 #include "glWrappers/FrameBuffer.hpp"
 #include "glWrappers/FrameBufferManager.hpp"
 #include "glWrappers/AttachmentManager.hpp"
+#include "glWrappers/GLBuffers.hpp"
 #include "appdelegate/AppDelegate.hpp"
 
 
@@ -48,6 +49,7 @@ void TestSceneGraph();
 void InitializeShaders();
 void TestTurboView();
 void TestEventSystem();
+void TestGLBuffers();
 
 int main()
 {
@@ -165,5 +167,9 @@ void TestEventSystem() {
     ecco::Event::KeyEvent::ModList mods;
     ecco::Event::KeyEvent::KeyList keys;
     m_globalDispatcher.dispatch(ecco::Event::KeyEvent("Key", mods, keys));
+
+}
+
+void TestGLBuffers() {
 
 }

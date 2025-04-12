@@ -62,6 +62,8 @@ set(HEADERS
 
     ./lib/eventSystem/EccoEvent.hpp
     ./lib/eventSystem/EventDispatcher.hpp
+
+    ./lib/glWrappers/GLBuffers.hpp
 )
 
 # Define source files for the static library
@@ -78,6 +80,7 @@ set(SOURCES
     ./lib/turbo-ui/TurboView.cpp
     ./lib/turbo-ui/PrePostTestView.cpp
     ./lib/eventSystem/EccoEvent.cpp
+    ./lib/glWrappers/GLBuffers.cpp
 )
 
 # Set build directory
