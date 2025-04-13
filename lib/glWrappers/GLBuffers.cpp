@@ -1,4 +1,7 @@
+
 #include "GLBuffers.hpp"
+#include "GLUtils.hpp"
+
 #include "../utils/assertMacros.hpp"
 
 #include <algorithm>
@@ -51,75 +54,128 @@ bool VAO::UnbindBuffer() {
     return true;
 }
 
-bool VAO::SetAttachment(VBOSpecifier specifier,
-                        std::unique_ptr<BaseGLBuffer> attachment) {
-    m_attachments.at(specifier).emplace_back(std::move(attachment));
+template <VBOSpecifier S>
+bool VAO::SetAttachment(std::unique_ptr<VAOSubBuffer<S>>& attachment) {
+
+    m_attachments.at(S).emplace_back(std::move(attachment));
     return true;
 }
-bool VAO::RemoveAttachment(VBOSpecifier specifier,
-                           const BaseGLBuffer *attachment) {
-        if (m_attachments.count(specifier)) {
+// bool VAO::RemoveAttachment(VBOSpecifier specifier,
+//                            const BaseGLBuffer *attachment) {
+//         if (m_attachments.count(specifier)) {
 
-        auto& vec = m_attachments.at(specifier);
-        auto it = std::find_if(vec.begin(), vec.end(),
-                               [attachment](const std::unique_ptr<BaseGLBuffer>& ptr) {
-                                   return ptr.get() == attachment;
-                               });
+//         auto& vec = m_attachments.at(specifier);
+//         auto it = std::find_if(vec.begin(), vec.end(),
+//                                [attachment](const std::unique_ptr<BaseGLBuffer>& ptr) {
+//                                    return ptr.get() == attachment;
+//                                });
 
-        if (it != vec.end()) {
-            vec.erase(it);
-            return true;
-        }
-    }
-    return false;
-}
+//         if (it != vec.end()) {
+//             vec.erase(it);
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 
-std::unique_ptr<BaseGLBuffer>
-VAO::MoveAttachment(VBOSpecifier specifier, const BaseGLBuffer* attachment)
-{
-    if (m_attachments.count(specifier)) {
+// std::unique_ptr<BaseGLBuffer>
+// VAO::MoveAttachment(VBOSpecifier specifier, const BaseGLBuffer* attachment)
+// {
+//     if (m_attachments.count(specifier)) {
 
-        auto& vec = m_attachments.at(specifier);
-        auto it = std::find_if(vec.begin(), vec.end(),
-                               [attachment](const std::unique_ptr<BaseGLBuffer>& ptr) {
-                                   return ptr.get() == attachment;
-                               });
+//         auto& vec = m_attachments.at(specifier);
+//         auto it = std::find_if(vec.begin(), vec.end(),
+//                                [attachment](const std::unique_ptr<BaseGLBuffer>& ptr) {
+//                                    return ptr.get() == attachment;
+//                                });
 
-        if (it != vec.end()) {
-            //move unique ptr out of vector
-            auto result = std::move(*it);
-            //erase from vector
-            vec.erase(it);
-            return result;
-        }
-    }
-    return nullptr;
-}
+//         if (it != vec.end()) {
+//             //move unique ptr out of vector
+//             auto result = std::move(*it);
+//             //erase from vector
+//             vec.erase(it);
+//             return result;
+//         }
+//     }
+//     return nullptr;
+// }
 
-/* THis also needs
- * 1) Set/Reset data, set gl_static, dynamic etc..
- * ugh fuck this should be using VBO_t not specifier
- * but data would be in format std::vector<VBO_t::type> or something
- */
 
-//this file is a clusterfuck of things that need to be done
 template<VBOSpecifier S>
-VAOSubBuffer<S>::VAOSubBuffer(size_t numElements)
-    : BaseGLBuffer(),
-      m_numElements(numElements) {
+VAOSubBuffer<S>::VAOSubBuffer()
+    : BaseGLBuffer() {}
 
-}
 template<VBOSpecifier S>
 VAOSubBuffer<S>::~VAOSubBuffer() {}
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::GenerateBuffer() {}
+bool VAOSubBuffer<S>::GenerateBuffer() {
+    return true;
+}
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::DeleteBuffer() {}
+bool VAOSubBuffer<S>::DeleteBuffer() {
+    return true;
+}
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::BindBuffer() {}
+bool VAOSubBuffer<S>::BindBuffer() {
+return true;
+}
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::UnbindBuffer() {}
+bool VAOSubBuffer<S>::UnbindBuffer() {
+    return true;
+}
+
+//may also want params for dynamic vs static update
+template<VBOSpecifier S>
+bool VAOSubBuffer<S>::SetData(const std::vector<DataType>& data, bool saveLocal) {
+
+    //from a design purpose these should always be 0 actually
+    //while maybe too verbose we always want functinos to bind then unbind at the end
+
+    // GLuint currentBoundVAO = m_attachedVAO->m_vaoHandle;
+    // GLuint currentBoundVBO = GetCurrentBoundVBO();
+    // if (!m_isBound)
+    //     currentBoundVAO = GetCurrentBoundVAO();
+
+    auto vao = m_attachedVAO.lock();
+    if (vao == nullptr)
+        return false;
+    vao->BindBuffer();
+    this->BindBuffer();
+
+    m_numElements = data.size();
+    //glBufferData
+    if (saveLocal) {
+        m_localSaved = true;
+        m_data = data;
+    }
+
+    this->UnbindBuffer();
+    vao->UnbindBuffer();
+    return true;
+}
+
+template<VBOSpecifier S>
+void VAOSubBuffer<S>::ClearCache() {
+    m_localSaved = false;
+    m_data.clear();
+}
+
+template<VBOSpecifier S>
+bool VAOSubBuffer<S>::SetVAO(std::shared_ptr<VAO> vao) {
+    m_attachedVAO = vao;
+    return true;
+}
+
+
+//I dont want VAOSubBuffer to be defined in .hpp file for now..
+template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::VertexInfo>;
+template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::NormalInfo>;
+template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::TriangleInfo>;
+template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::TexCoord1DInfo>;
+template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::TexCoord2DInfo>;
+template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::InstancePositions>;
+template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::InstanceTransforms>;

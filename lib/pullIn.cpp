@@ -41,6 +41,8 @@
 #include "eventSystem/EccoEvent.hpp"
 #include "eventSystem/EventDispatcher.hpp"
 
+using ecco::OpenGL::VAOSubBuffer;
+
 std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager;
 std::shared_ptr<ecco::OpenGL::AttachmentManager> m_attachmentManager;
 std::shared_ptr<ecco::Base::AppDelegate> m_appDelegate;
@@ -171,5 +173,14 @@ void TestEventSystem() {
 }
 
 void TestGLBuffers() {
+    using namespace ecco::OpenGL;
+    auto vao = std::make_shared<ecco::OpenGL::VAO>();
+    auto vao1 = std::make_shared<ecco::OpenGL::VAO>();
+
+    auto vboV = std::make_unique<VAOSubBuffer<VBOSpecifier::VertexInfo>>();
+    auto vboN = std::make_unique<VAOSubBuffer<VBOSpecifier::NormalInfo>>();
+    auto vboT = std::make_unique<VAOSubBuffer<VBOSpecifier::TriangleInfo>>();
+
+
 
 }
