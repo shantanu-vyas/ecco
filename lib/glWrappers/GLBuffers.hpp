@@ -53,6 +53,7 @@ public:
 protected:
     bool m_isGenerated = false;
     bool m_isBound = false;
+
 };
 
 class VAO : public BaseGLBuffer {
@@ -72,6 +73,18 @@ public:
 private:
     GLuint m_vaoHandle = 0;
     std::map<VBOSpecifier, std::vector<std::unique_ptr<BaseGLBuffer>>> m_attachments;
+
+    //shit we also need to keep a map of vertexAttribArray index to buffer..x
+    //so we need to wrap std::unique_ptr<BaseGLBUffer> in a struct
+    /**
+     * struct Attachment {
+     * GLuint m_vertexPointerAttribID
+     * std::unique_ptr<...>
+     * note we typically only have 1 ebo can we have more?
+     * if so how do we specify this, might need to write a case for this
+     }
+     */
+
 };
 
 template <VBOSpecifier S>
@@ -79,7 +92,7 @@ class VAOSubBuffer : public BaseGLBuffer {
 public:
     using DataType = VBO_t<S>;
 
-    VAOSubBuffer();
+    VAOSubBuffer(size_t numElements);
     virtual ~VAOSubBuffer();
 
     bool GenerateBuffer() override;
@@ -90,6 +103,7 @@ public:
 private:
     std::shared_ptr<VAO> m_attachedVAO;
     GLuint m_vboHandle = 0;
+    size_t m_numElements;
 };
 
 } // namespace OpenGL
