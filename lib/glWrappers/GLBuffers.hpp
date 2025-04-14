@@ -180,6 +180,7 @@ protected:
 //Forward declare vaosubbuffer for setattachment usage
 template <VBOSpecifier S>
 class VAOSubBuffer;
+class VAOSubBufferBase;
 
 class VAO : public BaseGLBuffer {
 
@@ -207,7 +208,7 @@ protected:
 private:
     //I dont like this being templated on BaseGLBuffer but it cant be templated on VAOSubBuffer
     //I could make VAOSubBuffer<S> inherit from VAOSubBufferBase and make the base type here that... TODO
-    std::map<VBOSpecifier, std::vector<std::shared_ptr<BaseGLBuffer>>> m_attachments;
+    std::map<VBOSpecifier, std::vector<std::shared_ptr<VAOSubBufferBase>>> m_attachments;
 
     //shit we also need to keep a map of vertexAttribArray index to buffer..x
     //so we need to wrap std::unique_ptr<BaseGLBUffer> in a struct
@@ -222,14 +223,22 @@ private:
 
 };
 
+class VAOSubBufferBase : public BaseGLBuffer {
+public:
+    VAOSubBufferBase() : BaseGLBuffer() {};
+    virtual ~VAOSubBufferBase() = default;
+    virtual VBOSpecifier GetVBOType() = 0;
+};
+
 template <VBOSpecifier S>
-class VAOSubBuffer : public BaseGLBuffer {
+class VAOSubBuffer : public VAOSubBufferBase {
     friend class VAO;
 public:
     using DataType = VBO_t<S>;
 
     VAOSubBuffer();
     virtual ~VAOSubBuffer();
+    virtual VBOSpecifier GetVBOType() override;
 
     bool GenerateBuffer() override;
     bool DeleteBuffer() override;

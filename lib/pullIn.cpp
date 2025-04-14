@@ -177,9 +177,9 @@ void TestGLBuffers() {
     auto vao = std::make_shared<ecco::OpenGL::VAO>();
     auto vao1 = std::make_shared<ecco::OpenGL::VAO>();
 
-    auto vboV = std::make_unique<VAOSubBuffer<VBOSpecifier::VertexInfo>>();
-    auto vboN = std::make_unique<VAOSubBuffer<VBOSpecifier::NormalInfo>>();
-    auto vboT = std::make_unique<VAOSubBuffer<VBOSpecifier::TriangleInfo>>();
+    auto vboV = std::make_shared<VAOSubBuffer<VBOSpecifier::VertexInfo>>();
+    auto vboN = std::make_shared<VAOSubBuffer<VBOSpecifier::NormalInfo>>();
+    auto vboT = std::make_shared<VAOSubBuffer<VBOSpecifier::TriangleInfo>>();
 
 
 

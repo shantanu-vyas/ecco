@@ -78,10 +78,15 @@ bool VAO::RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment) {
 
 template<VBOSpecifier S>
 VAOSubBuffer<S>::VAOSubBuffer()
-    : BaseGLBuffer() {}
+    : VAOSubBufferBase() {}
 
 template<VBOSpecifier S>
 VAOSubBuffer<S>::~VAOSubBuffer() {}
+
+template<VBOSpecifier S>
+VBOSpecifier VAOSubBuffer<S>::GetVBOType() {
+    return S;
+}
 
 template<VBOSpecifier S>
 bool VAOSubBuffer<S>::GenerateBuffer() {
