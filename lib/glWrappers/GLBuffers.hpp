@@ -65,21 +65,94 @@ template <> struct VBOType<VBOSpecifier::VertexInfo> {
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
 
-template <> struct VBOType<VBOSpecifier::NormalInfo>          { using type = glm::fvec3; };
-template <> struct VBOType<VBOSpecifier::TriangleInfo>        { using type = glm::ivec3; };
-template <> struct VBOType<VBOSpecifier::TexCoord1DInfo>      { using type = glm::fvec1; };
-template <> struct VBOType<VBOSpecifier::TexCoord2DInfo>      { using type = glm::fvec2; };
-template <> struct VBOType<VBOSpecifier::InstancePositions>   { using type = glm::fvec3; };
-template <> struct VBOType<VBOSpecifier::InstanceTransforms>  { using type = glm::fmat4; };
-template <> struct VBOType<VBOSpecifier::Float1>              {};
-template <> struct VBOType<VBOSpecifier::Float2>              {};
-template <> struct VBOType<VBOSpecifier::Float3>              {};
-template <> struct VBOType<VBOSpecifier::Int1>              {};
-template <> struct VBOType<VBOSpecifier::Int2>              {};
-template <> struct VBOType<VBOSpecifier::Int3>              {};
-template <> struct VBOType<VBOSpecifier::Mat3x3>              {};
-template <> struct VBOType<VBOSpecifier::Mat3x4>              {};
-template <> struct VBOType<VBOSpecifier::Mat4x4>              {};
+template <> struct VBOType<VBOSpecifier::NormalInfo> {
+    using type = glm::fvec3;
+    static constexpr const char* m_name = "Normal3f : glm::fvec3";
+    static constexpr int m_numDimensions = 3;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
+template <> struct VBOType<VBOSpecifier::TriangleInfo> {
+    using type = glm::ivec3;
+    static constexpr const char* m_name = "Triangle3i : glm::ivec3";
+    static constexpr int m_numDimensions = 3;
+    static constexpr GLenum m_elementType = GL_INT;
+};
+template <> struct VBOType<VBOSpecifier::TexCoord1DInfo> {
+    using type = glm::fvec1;
+    static constexpr const char* m_name = "TexCoord1D : glm::fvec1";
+    static constexpr int m_numDimensions = 1;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
+template <> struct VBOType<VBOSpecifier::TexCoord2DInfo> {
+    using type = glm::fvec2;
+    static constexpr const char* m_name = "TexCoord2D : glm::fvec2";
+    static constexpr int m_numDimensions = 2;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
+template <> struct VBOType<VBOSpecifier::InstancePositions>   {
+    using type = glm::fvec3;
+    static constexpr const char* m_name = "InstancePosition : glm::fvec3";
+    static constexpr int m_numDimensions = 3;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
+template <> struct VBOType<VBOSpecifier::InstanceTransforms> {
+    using type = glm::fmat4;
+    static constexpr const char* m_name = "InstanceTransforms : glm::fmat3";
+    static constexpr int m_numDimensionsX = 3; //i wonder if this will cause dynamic type issues in the future...x
+    static constexpr int m_numDimensionsY = 3;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
+template <> struct VBOType<VBOSpecifier::Float1> {
+    using type = glm::fvec1;
+    static constexpr const char* m_name = "Float1 : glm::fvec1";
+    static constexpr int m_numDimensions = 1;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
+template <> struct VBOType<VBOSpecifier::Float2> {
+    using type = glm::fvec2;
+    static constexpr const char* m_name = "Float2 : glm::fvec2";
+    static constexpr int m_numDimensions = 2;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
+template <> struct VBOType<VBOSpecifier::Float3> {
+    using type = glm::fvec3;
+    static constexpr const char* m_name = "Float3 : glm::fvec3";
+    static constexpr int m_numDimensions = 3;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
+template <> struct VBOType<VBOSpecifier::Int1> {
+    using type = glm::ivec1;
+    static constexpr const char* m_name = "Int1 : glm::ivec1";
+    static constexpr int m_numDimensions = 1;
+    static constexpr GLenum m_elementType = GL_INT;
+};
+template <> struct VBOType<VBOSpecifier::Int2> {
+    using type = glm::ivec2;
+    static constexpr const char* m_name = "Int2 : glm::ivec2";
+    static constexpr int m_numDimensions = 2;
+    static constexpr GLenum m_elementType = GL_INT;
+};
+template <> struct VBOType<VBOSpecifier::Int3> {
+    using type = glm::ivec3;
+    static constexpr const char* m_name = "Int3 : glm::ivec3";
+    static constexpr int m_numDimensions = 3;
+    static constexpr GLenum m_elementType = GL_INT;
+};
+template <> struct VBOType<VBOSpecifier::Mat3x3> {
+    using type = glm::fmat3;
+    static constexpr const char* m_name = "Mat3 : glm::fmat3";
+    static constexpr int m_numDimensionsX = 3;
+    static constexpr int m_numDimensionsY = 3;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
+
+template <> struct VBOType<VBOSpecifier::Mat4x4> {
+    using type = glm::fmat4;
+    static constexpr const char* m_name = "Mat3 : glm::fmat4";
+    static constexpr int m_numDimensionsX = 4;
+    static constexpr int m_numDimensionsY = 4;
+    static constexpr GLenum m_elementType = GL_FLOAT;
+};
 
 
 
