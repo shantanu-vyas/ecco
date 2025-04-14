@@ -177,13 +177,13 @@ protected:
 
 };
 
+
 //Forward declare vaosubbuffer for setattachment usage
 template <VBOSpecifier S>
 class VAOSubBuffer;
 class VAOSubBufferBase;
 
 class VAO : public BaseGLBuffer {
-
     template <VBOSpecifier S>
     friend class VAOSubBuffer;
 
@@ -202,24 +202,26 @@ public:
     template <VBOSpecifier S>
     bool RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment);
 
-
+    //ex if vertex vbo 1 is attached and we try to attach 2 it will unattach 1 then attach 2 and return true if replace is true
+    //These functions are specifically setting the vertexattribptr
+    //0 - Vertex, 1 - Normal, 2 - Texture Coord, 3-N anything else
+    template<VBOSpecifier S>
+    bool Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace = true);
+    template<VBOSpecifier S>
+    bool Detach(std::shared_ptr<VAOSubBuffer<S>> attachment);
 protected:
     GLuint m_vaoHandle = 0;
 private:
-    //I dont like this being templated on BaseGLBuffer but it cant be templated on VAOSubBuffer
-    //I could make VAOSubBuffer<S> inherit from VAOSubBufferBase and make the base type here that... TODO
     std::map<VBOSpecifier, std::vector<std::shared_ptr<VAOSubBufferBase>>> m_attachments;
 
-    //shit we also need to keep a map of vertexAttribArray index to buffer..x
-    //so we need to wrap std::unique_ptr<BaseGLBUffer> in a struct
-    /**
-     * struct Attachment {
-     * GLuint m_vertexPointerAttribID
-     * std::unique_ptr<...>
-     * note we typically only have 1 ebo can we have more?
-     * if so how do we specify this, might need to write a case for this
-     }
-     */
+    size_t m_maxAllowedNumAttachments;
+    struct AttachedAttachments {
+        bool m_isAttached;
+        int m_slotNumber;
+        std::shared_ptr<std::shared_ptr<VAOSubBufferBase>> m_attachment;
+    };
+    std::map<int, std::vector<AttachedAttachments>> m_attachedAttachments;
+
 
 };
 

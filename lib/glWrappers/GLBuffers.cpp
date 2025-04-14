@@ -77,6 +77,40 @@ bool VAO::RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment) {
 }
 
 template<VBOSpecifier S>
+bool VAO::Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace) {
+    auto& vec = m_attachments.at(S);
+    ecco_assert(std::find(vec.begin(), vec.end(), attachment) == vec.end(), "VAO::Attach - Can not attach non added attachment");
+
+    if (S == VBOSpecifier::VertexInfo) {
+        // if (!replace)
+            //if currently bound return false
+        //bind vertex attrib array at 0
+    }
+    else if (S == VBOSpecifier::NormalInfo) {
+        // if (!replace)
+            //same thing
+    }
+    else if (S == VBOSpecifier::TriangleInfo) {
+        // if (!replace)
+            //same thing
+    }
+    else if (S == VBOSpecifier::TexCoord1DInfo || S == VBOSpecifier::TexCoord2DInfo) {
+        // if (!replace)
+            //same thing
+    }
+    else {
+        //Get next open attrib spot
+        //somehow i want to keep track of the lowest number avail thats not 1-3
+    }
+}
+
+
+template<VBOSpecifier S>
+bool VAO::Detach(std::shared_ptr<VAOSubBuffer<S>> attachment) {
+
+}
+
+template<VBOSpecifier S>
 VAOSubBuffer<S>::VAOSubBuffer()
     : VAOSubBufferBase() {}
 
