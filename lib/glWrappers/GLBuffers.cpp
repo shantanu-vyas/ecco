@@ -54,52 +54,27 @@ bool VAO::UnbindBuffer() {
     return true;
 }
 
+
 template <VBOSpecifier S>
-bool VAO::SetAttachment(std::unique_ptr<VAOSubBuffer<S>>& attachment) {
-
-    m_attachments.at(S).emplace_back(std::move(attachment));
-    return true;
+bool VAO::SetAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment) {
+    auto& vec = m_attachments.at(S);
+    if (std::find(vec.begin(), vec.end(), attachment) == vec.end()) {
+        vec.emplace_back(attachment);
+        return true;
+    }
+    return false;
 }
-// bool VAO::RemoveAttachment(VBOSpecifier specifier,
-//                            const BaseGLBuffer *attachment) {
-//         if (m_attachments.count(specifier)) {
 
-//         auto& vec = m_attachments.at(specifier);
-//         auto it = std::find_if(vec.begin(), vec.end(),
-//                                [attachment](const std::unique_ptr<BaseGLBuffer>& ptr) {
-//                                    return ptr.get() == attachment;
-//                                });
-
-//         if (it != vec.end()) {
-//             vec.erase(it);
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
-// std::unique_ptr<BaseGLBuffer>
-// VAO::MoveAttachment(VBOSpecifier specifier, const BaseGLBuffer* attachment)
-// {
-//     if (m_attachments.count(specifier)) {
-
-//         auto& vec = m_attachments.at(specifier);
-//         auto it = std::find_if(vec.begin(), vec.end(),
-//                                [attachment](const std::unique_ptr<BaseGLBuffer>& ptr) {
-//                                    return ptr.get() == attachment;
-//                                });
-
-//         if (it != vec.end()) {
-//             //move unique ptr out of vector
-//             auto result = std::move(*it);
-//             //erase from vector
-//             vec.erase(it);
-//             return result;
-//         }
-//     }
-//     return nullptr;
-// }
-
+template <VBOSpecifier S>
+bool VAO::RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment) {
+    auto& vec = m_attachments.at(S);
+    auto it = std::find(vec.begin(), vec.end(), attachment);
+    if (it != vec.end()) {
+        vec.erase(it);
+        return true;
+    }
+    return false;
+}
 
 template<VBOSpecifier S>
 VAOSubBuffer<S>::VAOSubBuffer()

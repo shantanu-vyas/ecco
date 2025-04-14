@@ -196,23 +196,18 @@ public:
     bool UnbindBuffer() override;
 
     template <VBOSpecifier S>
-    bool SetAttachment(std::unique_ptr<VAOSubBuffer<S>>& attachment);
+    bool SetAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment);
 
-    //how tf would this even work lol there is a unique ptr
-    // template <VBOSpecifier S>
-    // bool RemoveAttachment(VBOSpecifier specifier, const BaseGLBuffer* attachment);
+    template <VBOSpecifier S>
+    bool RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment);
 
-    //same here how are you supposed to get/move an attachment
-    //we have a multi map so we would have to have an id attached to each element of the multimaps vector which would be its identifier
-    //this isnt really a big use case though so im just going to comment it out. I cant think of any reason i would move a vbo
-    //between vaos.
-    // template <VBOSpecifier S>
-    // std::unique_ptr<BaseGLBuffer> MoveAttachment(VBOSpecifier specifier, const BaseGLBuffer* attachment);
 
 protected:
     GLuint m_vaoHandle = 0;
 private:
-    std::map<VBOSpecifier, std::vector<std::unique_ptr<BaseGLBuffer>>> m_attachments;
+    //I dont like this being templated on BaseGLBuffer but it cant be templated on VAOSubBuffer
+    //I could make VAOSubBuffer<S> inherit from VAOSubBufferBase and make the base type here that... TODO
+    std::map<VBOSpecifier, std::vector<std::shared_ptr<BaseGLBuffer>>> m_attachments;
 
     //shit we also need to keep a map of vertexAttribArray index to buffer..x
     //so we need to wrap std::unique_ptr<BaseGLBUffer> in a struct
