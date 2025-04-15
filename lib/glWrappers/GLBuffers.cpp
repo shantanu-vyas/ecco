@@ -3,8 +3,10 @@
 #include "GLUtils.hpp"
 
 #include "../utils/assertMacros.hpp"
+#include "glWrappers/Attachment.hpp"
 
 #include <algorithm>
+#include <memory>
 
 using namespace ecco::OpenGL;
 
@@ -15,7 +17,10 @@ BaseGLBuffer::BaseGLBuffer() :
 
 VAO::VAO() :
     BaseGLBuffer() {
-
+    size_t maxNumAttachements = ecco::OpenGL::GetMaxAllowedVAOAttachments();
+    AttachedAttachments empty{false, nullptr};
+    for (size_t i = 0; i < maxNumAttachements; i++)
+        m_attachedAttachments[i] = empty;
 }
 VAO::~VAO() {
 
@@ -85,29 +90,64 @@ bool VAO::Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace) {
         // if (!replace)
             //if currently bound return false
         //bind vertex attrib array at 0
+
+        auto cur = m_attachedAttachments.at(0);
+        cur.m_isAttached = true;
+        cur.m_attachment = attachment;
+        cur.m_attachment->SetAttachmentSlot(0);
+
     }
     else if (S == VBOSpecifier::NormalInfo) {
         // if (!replace)
             //same thing
+        auto cur = m_attachedAttachments.at(1);
+        cur.m_isAttached = true;
+        cur.m_attachment = attachment;
+        cur.m_attachment->SetAttachmentSlot(1);
     }
     else if (S == VBOSpecifier::TriangleInfo) {
         // if (!replace)
-            //same thing
+            //same thing but no vertexattribarrayptr
+
+        auto cur = m_attachedAttachments.at(2);
+        cur.m_isAttached = true;
+        cur.m_attachment = attachment;
+        cur.m_attachment->SetAttachmentSlot(2);
     }
     else if (S == VBOSpecifier::TexCoord1DInfo || S == VBOSpecifier::TexCoord2DInfo) {
+
         // if (!replace)
             //same thing
+        m_attachedAttachments.at(3) = attachment;
+        auto cur = m_attachedAttachments.at(3);
+        cur.m_isAttached = true;
+        cur.m_attachment = attachment;
+        cur.m_attachment->SetAttachmentSlot(0);
     }
     else {
-        //Get next open attrib spot
-        //somehow i want to keep track of the lowest number avail thats not 1-3
+        auto findOpenSlot = [this]() -> int {
+            for (const auto& it : m_attachedAttachments)
+                if (it.second.m_attachment == nullptr && it.first > 3) //0 1 2 3 are dedicated for mesh
+                    return it.first;
+            return -1;
+        };
+        auto openSlot = findOpenSlot();
+        m_attachedAttachments.at(openSlot) = attachment;
+        auto cur = m_attachedAttachments.at(openSlot);
+        cur.m_isAttached = true;
+        cur.m_attachment = attachment;
+        cur.m_attachment->SetAttachmentSlot(openSlot);
     }
 }
 
 
 template<VBOSpecifier S>
 bool VAO::Detach(std::shared_ptr<VAOSubBuffer<S>> attachment) {
-
+    //detach in gl
+    auto& attachedAttachment = m_attachedAttachments.at(attachment->GetSlotID);
+    attachedAttachment->m_isAttached = false;
+    attachment->SetSlotID(0);
+    attachedAttachment->m_attachment = nullptr;
 }
 
 template<VBOSpecifier S>
@@ -187,6 +227,7 @@ bool VAOSubBuffer<S>::SetVAO(std::shared_ptr<VAO> vao) {
 
 //I dont want VAOSubBuffer to be defined in .hpp file for now..
 template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::VertexInfo>;
+template void VAO::Attach<VBOSpecifier::VertexInfo>(std::shared_ptr<VAOSubBuffer<VBOSpecifier::VertexInfo>>);
 template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::NormalInfo>;
 template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::TriangleInfo>;
 template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::TexCoord1DInfo>;

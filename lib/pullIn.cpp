@@ -182,7 +182,7 @@ void TestGLBuffers() {
     auto vboT = std::make_shared<VAOSubBuffer<VBOSpecifier::TriangleInfo>>();
 
     //Linking errors until i move template stuff into header
-    // vao1->SetAttachment(vboV);
+    vao1->SetAttachment(vboV);
     // vao1->SetAttachment(vboN);
     // vao1->SetAttachment(vboT);
 

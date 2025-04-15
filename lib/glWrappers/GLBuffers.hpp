@@ -217,10 +217,9 @@ private:
     size_t m_maxAllowedNumAttachments;
     struct AttachedAttachments {
         bool m_isAttached;
-        int m_slotNumber;
-        std::shared_ptr<std::shared_ptr<VAOSubBufferBase>> m_attachment;
+        std::shared_ptr<VAOSubBufferBase> m_attachment;
     };
-    std::map<int, std::vector<AttachedAttachments>> m_attachedAttachments;
+    std::map<int, AttachedAttachments> m_attachedAttachments;
 
 
 };
@@ -230,6 +229,10 @@ public:
     VAOSubBufferBase() : BaseGLBuffer() {};
     virtual ~VAOSubBufferBase() = default;
     virtual VBOSpecifier GetVBOType() = 0;
+    void SetAttachmentSlot(int slot) { m_slotID = slot; };
+    int GetAttachmentSlot() { return m_slotID; };
+protected:
+    int m_slotID;
 };
 
 template <VBOSpecifier S>
