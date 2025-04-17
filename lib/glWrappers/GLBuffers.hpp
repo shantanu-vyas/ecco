@@ -269,6 +269,8 @@ private:
 };
 
 } // namespace OpenGL
-} // namespace ecco
+}
+ // namespace ecco
+#include "GLBuffers.tpp"
 
 #endif

@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <stdexcept>
 
 using namespace ecco::OpenGL;
 
@@ -88,7 +89,7 @@ bool VAO::RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment) {
 template<VBOSpecifier S>
 bool VAO::Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace) {
     auto& vec = m_attachments.at(S);
-    ecco_assert(std::find(vec.begin(), vec.end(), attachment) == vec.end(), "VAO::Attach - Can not attach non added attachment");
+    ecco_assert(std::find(vec.begin(), vec.end(), attachment) != vec.end(), "VAO::Attach - Can not attach non added attachment");
 
     if (S == VBOSpecifier::VertexInfo) {
         // if (!replace)
@@ -135,22 +136,28 @@ bool VAO::Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace) {
             return -1;
         };
         auto openSlot = findOpenSlot();
-        m_attachedAttachments.at(openSlot) = attachment;
         auto cur = m_attachedAttachments.at(openSlot);
         cur.m_isAttached = true;
         cur.m_attachment = attachment;
         cur.m_attachment->SetAttachmentSlot(openSlot);
     }
+    return true;
 }
 
 
 template<VBOSpecifier S>
 bool VAO::Detach(std::shared_ptr<VAOSubBuffer<S>> attachment) {
     //detach in gl
-    auto& attachedAttachment = m_attachedAttachments.at(attachment->GetSlotID);
-    attachedAttachment->m_isAttached = false;
-    attachment->SetSlotID(0);
-    attachedAttachment->m_attachment = nullptr;
+    try {
+        auto attachedAttachment = m_attachedAttachments.at(attachment->GetAttachmentSlot());
+        attachedAttachment.m_isAttached = false;
+        attachment->SetAttachmentSlot(0);
+        attachedAttachment.m_attachment = nullptr;
+        return true;
+    }
+    catch (const std::out_of_range& e) {
+        return false;
+    }
 }
 
 void VAO::PrintAllAttachments() const {
@@ -239,19 +246,3 @@ bool VAOSubBuffer<S>::SetVAO(std::shared_ptr<VAO> vao) {
     m_attachedVAO = vao;
     return true;
 }
-
-
-//I dont want VAOSubBuffer to be defined in .hpp file for now..
-template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::VertexInfo>;
-template bool ecco::OpenGL::VAO::SetAttachment<ecco::OpenGL::VBOSpecifier::VertexInfo>(std::shared_ptr<ecco::OpenGL::VAOSubBuffer<ecco::OpenGL::VBOSpecifier::VertexInfo>>);
-template bool ecco::OpenGL::VAO::RemoveAttachment<ecco::OpenGL::VBOSpecifier::VertexInfo>(std::shared_ptr<ecco::OpenGL::VAOSubBuffer<ecco::OpenGL::VBOSpecifier::VertexInfo>>);
-template bool ecco::OpenGL::VAO::Attach<(ecco::OpenGL::VBOSpecifier)0>(std::shared_ptr<ecco::OpenGL::VAOSubBuffer<(ecco::OpenGL::VBOSpecifier)0> >, bool);
-template bool ecco::OpenGL::VAO::Detach<(ecco::OpenGL::VBOSpecifier)0>(std::shared_ptr<ecco::OpenGL::VAOSubBuffer<(ecco::OpenGL::VBOSpecifier)0> >);
-
-
-template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::NormalInfo>;
-template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::TriangleInfo>;
-template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::TexCoord1DInfo>;
-template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::TexCoord2DInfo>;
-template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::InstancePositions>;
-template class ecco::OpenGL::VAOSubBuffer<VBOSpecifier::InstanceTransforms>;

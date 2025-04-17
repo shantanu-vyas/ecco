@@ -182,7 +182,8 @@ void TestGLBuffers() {
     auto vboN = std::make_shared<VAOSubBuffer<VBOSpecifier::NormalInfo>>();
     auto vboT = std::make_shared<VAOSubBuffer<VBOSpecifier::TriangleInfo>>();
 
-    vao1->SetAttachment(vboV);
+
+    bool added = vao1->SetAttachment(vboV);
     vao1->Attach(vboV);
 
     vao1->PrintAllAttachments();

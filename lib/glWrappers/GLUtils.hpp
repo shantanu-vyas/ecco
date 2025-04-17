@@ -14,7 +14,9 @@ namespace ecco {
         }
 
         static size_t GetMaxAllowedVAOAttachments() {
-            return 100;
+            GLint maxAttribs = 0;
+            glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
+            return maxAttribs;
         }
 
     }
