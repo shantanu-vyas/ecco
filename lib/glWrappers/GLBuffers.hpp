@@ -209,6 +209,9 @@ public:
     bool Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace = true);
     template<VBOSpecifier S>
     bool Detach(std::shared_ptr<VAOSubBuffer<S>> attachment);
+
+    void PrintAllAttachments() const;
+    void PrintAttachedAttachments() const;
 protected:
     GLuint m_vaoHandle = 0;
 private:

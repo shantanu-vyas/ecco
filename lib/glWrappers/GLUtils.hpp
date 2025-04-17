@@ -14,7 +14,7 @@ namespace ecco {
         }
 
         static size_t GetMaxAllowedVAOAttachments() {
-
+            return 100;
         }
 
     }

@@ -55,7 +55,8 @@ void TestGLBuffers();
 
 int main()
 {
-
+    TestGLBuffers();
+    exit(0);
     // std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
 
     m_fboManager = ecco::OpenGL::FrameBufferManager::GetInstance();
@@ -181,10 +182,11 @@ void TestGLBuffers() {
     auto vboN = std::make_shared<VAOSubBuffer<VBOSpecifier::NormalInfo>>();
     auto vboT = std::make_shared<VAOSubBuffer<VBOSpecifier::TriangleInfo>>();
 
-    //Linking errors until i move template stuff into header
     vao1->SetAttachment(vboV);
-    // vao1->SetAttachment(vboN);
-    // vao1->SetAttachment(vboT);
+    vao1->Attach(vboV);
 
+    vao1->PrintAllAttachments();
+    vao1->RemoveAttachment(vboV);
+    vao1->PrintAllAttachments();
 
 }
