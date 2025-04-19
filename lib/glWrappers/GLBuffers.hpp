@@ -60,99 +60,127 @@ enum class VBOSpecifier {
 template <VBOSpecifier> struct VBOType;
 template <> struct VBOType<VBOSpecifier::VertexInfo> {
     using type = glm::fvec3;
+    static constexpr const char* m_vboName = "Vertex VBO";
     static constexpr const char* m_name = "Vertex3f : glm::fvec3";
-    static constexpr int m_numDimensions = 3;
+    static constexpr int  m_numDimensions = 3;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
 
 template <> struct VBOType<VBOSpecifier::NormalInfo> {
     using type = glm::fvec3;
+    static constexpr const char* m_vboName = "Normal VBO";
     static constexpr const char* m_name = "Normal3f : glm::fvec3";
-    static constexpr int m_numDimensions = 3;
+    static constexpr int  m_numDimensions = 3;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
+
 template <> struct VBOType<VBOSpecifier::TriangleInfo> {
     using type = glm::ivec3;
+    static constexpr const char* m_vboName = "Triangle VBO";
     static constexpr const char* m_name = "Triangle3i : glm::ivec3";
-    static constexpr int m_numDimensions = 3;
+    static constexpr int  m_numDimensions = 3;
     static constexpr GLenum m_elementType = GL_INT;
 };
+
 template <> struct VBOType<VBOSpecifier::TexCoord1DInfo> {
     using type = glm::fvec1;
+    static constexpr const char* m_vboName = "TexCoord1D VBO";
     static constexpr const char* m_name = "TexCoord1D : glm::fvec1";
-    static constexpr int m_numDimensions = 1;
+    static constexpr int  m_numDimensions = 1;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
+
 template <> struct VBOType<VBOSpecifier::TexCoord2DInfo> {
     using type = glm::fvec2;
+    static constexpr const char* m_vboName = "TexCoord2D VBO";
     static constexpr const char* m_name = "TexCoord2D : glm::fvec2";
-    static constexpr int m_numDimensions = 2;
+    static constexpr int  m_numDimensions = 2;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
-template <> struct VBOType<VBOSpecifier::InstancePositions>   {
+
+template <> struct VBOType<VBOSpecifier::InstancePositions> {
     using type = glm::fvec3;
+    static constexpr const char* m_vboName = "InstancePositions VBO";
     static constexpr const char* m_name = "InstancePosition : glm::fvec3";
-    static constexpr int m_numDimensions = 3;
+    static constexpr int  m_numDimensions = 3;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
+
 template <> struct VBOType<VBOSpecifier::InstanceTransforms> {
     using type = glm::fmat4;
+    static constexpr const char* m_vboName = "InstanceTransforms VBO";
     static constexpr const char* m_name = "InstanceTransforms : glm::fmat3";
-    static constexpr int m_numDimensionsX = 3; //i wonder if this will cause dynamic type issues in the future...x
-    static constexpr int m_numDimensionsY = 3;
+    static constexpr int  m_numDimensionsX = 3;
+    static constexpr int  m_numDimensionsY = 3;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
+
 template <> struct VBOType<VBOSpecifier::Float1> {
     using type = glm::fvec1;
+    static constexpr const char* m_vboName = "Float1 VBO";
     static constexpr const char* m_name = "Float1 : glm::fvec1";
-    static constexpr int m_numDimensions = 1;
+    static constexpr int  m_numDimensions = 1;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
+
 template <> struct VBOType<VBOSpecifier::Float2> {
     using type = glm::fvec2;
+    static constexpr const char* m_vboName = "Float2 VBO";
     static constexpr const char* m_name = "Float2 : glm::fvec2";
-    static constexpr int m_numDimensions = 2;
+    static constexpr int  m_numDimensions = 2;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
+
 template <> struct VBOType<VBOSpecifier::Float3> {
     using type = glm::fvec3;
+    static constexpr const char* m_vboName = "Float3 VBO";
     static constexpr const char* m_name = "Float3 : glm::fvec3";
-    static constexpr int m_numDimensions = 3;
+    static constexpr int  m_numDimensions = 3;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
+
 template <> struct VBOType<VBOSpecifier::Int1> {
     using type = glm::ivec1;
+    static constexpr const char* m_vboName = "Int1 VBO";
     static constexpr const char* m_name = "Int1 : glm::ivec1";
-    static constexpr int m_numDimensions = 1;
+    static constexpr int  m_numDimensions = 1;
     static constexpr GLenum m_elementType = GL_INT;
 };
+
 template <> struct VBOType<VBOSpecifier::Int2> {
     using type = glm::ivec2;
+    static constexpr const char* m_vboName = "Int2 VBO";
     static constexpr const char* m_name = "Int2 : glm::ivec2";
-    static constexpr int m_numDimensions = 2;
+    static constexpr int  m_numDimensions = 2;
     static constexpr GLenum m_elementType = GL_INT;
 };
+
 template <> struct VBOType<VBOSpecifier::Int3> {
     using type = glm::ivec3;
+    static constexpr const char* m_vboName = "Int3 VBO";
     static constexpr const char* m_name = "Int3 : glm::ivec3";
-    static constexpr int m_numDimensions = 3;
+    static constexpr int  m_numDimensions = 3;
     static constexpr GLenum m_elementType = GL_INT;
 };
+
 template <> struct VBOType<VBOSpecifier::Mat3x3> {
     using type = glm::fmat3;
+    static constexpr const char* m_vboName = "Mat3x3 VBO";
     static constexpr const char* m_name = "Mat3 : glm::fmat3";
-    static constexpr int m_numDimensionsX = 3;
-    static constexpr int m_numDimensionsY = 3;
+    static constexpr int  m_numDimensionsX = 3;
+    static constexpr int  m_numDimensionsY = 3;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
 
 template <> struct VBOType<VBOSpecifier::Mat4x4> {
     using type = glm::fmat4;
+    static constexpr const char* m_vboName = "Mat4x4 VBO";
     static constexpr const char* m_name = "Mat3 : glm::fmat4";
-    static constexpr int m_numDimensionsX = 4;
-    static constexpr int m_numDimensionsY = 4;
+    static constexpr int  m_numDimensionsX = 4;
+    static constexpr int  m_numDimensionsY = 4;
     static constexpr GLenum m_elementType = GL_FLOAT;
 };
+
 
 
 
@@ -232,6 +260,7 @@ public:
     VAOSubBufferBase() : BaseGLBuffer() {};
     virtual ~VAOSubBufferBase() = default;
     virtual VBOSpecifier GetVBOType() = 0;
+    virtual const char* GetVBOName() const = 0;
     void SetAttachmentSlot(int slot) { m_slotID = slot; };
     int GetAttachmentSlot() { return m_slotID; };
 protected:
@@ -247,6 +276,7 @@ public:
     VAOSubBuffer();
     virtual ~VAOSubBuffer();
     virtual VBOSpecifier GetVBOType() override;
+    const char* GetVBOName() const override;
 
     bool GenerateBuffer() override;
     bool DeleteBuffer() override;

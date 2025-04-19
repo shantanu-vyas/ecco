@@ -56,7 +56,6 @@ void TestGLBuffers();
 int main()
 {
     TestGLBuffers();
-    exit(0);
     // std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
 
     m_fboManager = ecco::OpenGL::FrameBufferManager::GetInstance();
@@ -183,8 +182,14 @@ void TestGLBuffers() {
     auto vboT = std::make_shared<VAOSubBuffer<VBOSpecifier::TriangleInfo>>();
 
 
-    bool added = vao1->SetAttachment(vboV);
+    vao1->SetAttachment(vboV);
     vao1->Attach(vboV);
+
+    //so should doing this assert ot return false
+    //if normals doesnt exist we return false
+    //if it does exist but the specific vao doesnt we assert
+    // vao1->Attach(vboN);
+
 
     vao1->PrintAllAttachments();
     vao1->RemoveAttachment(vboV);
