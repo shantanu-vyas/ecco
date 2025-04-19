@@ -81,7 +81,7 @@ private:
         explicit EccoOutcome(T&& v) : m_status{OutcomeStatus::Success}, m_value{std::move(v)} {};
         //Fail constructor
         explicit EccoOutcome(std::string_view msg) : m_status{OutcomeStatus::Failure} {
-            m_stackTrace.emplace_back(nullptr,0,nullptr,msg);
+            m_stackTrace.emplace_back("",0,"",msg);
         };
 
         OutcomeStatus m_status;
@@ -101,7 +101,7 @@ public:
     bool IsFailure() const { return !IsSuccess(); }
     explicit operator bool() const { return IsSuccess(); }
 
-    void AddContext(std::string file, int line, std::string function, std::string_view msg = {}) {
+    void AddTrace(std::string file, int line, std::string function, std::string_view msg = {}) {
         m_stackTrace.emplace_back(file,line,function,msg);
     }
     const std::vector<TraceFrame>& Trace() const { return m_stackTrace; }
@@ -146,7 +146,7 @@ using OutcomeData = EccoOutcome<T>;
     do {                                                              \
         auto outcome = (func);                                        \
         if (!outcome) {                                               \
-            outcome.AddContext(__FILE__, __LINE__, __FUNC__);           \
+            outcome.AddTrace(__FILE__, __LINE__, __func__);           \
             return outcome;                                             \
         }                                                               \
     } while (false)                                                     \

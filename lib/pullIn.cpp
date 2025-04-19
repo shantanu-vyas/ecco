@@ -212,18 +212,47 @@ void TestOutcome() {
     };
 
     auto passData = []() -> ecco::OutcomeData<int> {
-        return ecco::OutcomeData<int>::Success(42);
+        return ecco::OutcomeData<int>::Success(420);
     };
     auto failData = []() -> ecco::OutcomeData<int> {
         return ecco::OutcomeData<int>::Failure("fuck");
     };
 
+    //& so we get fail()
+    auto failMacroTest = [&]() -> ecco::StatusOutcome {
+        RETURN_ON_FAIL(fail());
+        return ecco::StatusOutcome::Success();
+    };
+
+    auto failMacroDataTest = [&]() -> ecco::OutcomeData<int> {
+    RETURN_ON_FAIL(failData());
+    return ecco::OutcomeData<int>::Success(420);
+
+};
+
+    std::cout << "pass" << std::endl;
     auto passTest = pass();
     passTest.Print();
+
+    std::cout << "fail" << std::endl;
     auto failTest = fail();
     failTest.Print();
+
+    std::cout << "pass data" << std::endl;
     auto passDataTest = passData();
+    passDataTest.Print();
+
+    std::cout << "fail data" << std::endl;
     auto failDataTest = failData();
+    failDataTest.Print();
+
+    std::cout << "fail macro " << std::endl;
+    auto failMacro = failMacroTest();
+    failMacro.Print();
+
+    std::cout << "fail macro data" << std::endl;
+    auto failMacroData = failMacroDataTest();
+    failMacroData.Print();
 
 
 }
