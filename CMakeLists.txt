@@ -64,6 +64,8 @@ set(HEADERS
     ./lib/eventSystem/EventDispatcher.hpp
 
     ./lib/glWrappers/GLBuffers.hpp
+
+    ./lib/ecco/EccoOutcome.hpp
 )
 
 # Define source files for the static library

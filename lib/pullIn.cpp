@@ -41,6 +41,8 @@
 #include "eventSystem/EccoEvent.hpp"
 #include "eventSystem/EventDispatcher.hpp"
 
+#include "ecco/EccoOutcome.hpp"
+
 using ecco::OpenGL::VAOSubBuffer;
 
 std::shared_ptr<ecco::OpenGL::FrameBufferManager> m_fboManager;
@@ -52,9 +54,12 @@ void InitializeShaders();
 void TestTurboView();
 void TestEventSystem();
 void TestGLBuffers();
+void TestOutcome();
 
 int main()
 {
+    TestOutcome();
+    exit(0);
     TestGLBuffers();
     // std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
 
@@ -194,5 +199,31 @@ void TestGLBuffers() {
     vao1->PrintAllAttachments();
     vao1->RemoveAttachment(vboV);
     vao1->PrintAllAttachments();
+
+}
+
+void TestOutcome() {
+    std::cout << "running" << std::endl;
+    auto pass = []() -> ecco::StatusOutcome {
+        return ecco::StatusOutcome::Success();
+    };
+    auto fail = []() -> ecco::StatusOutcome {
+        return ecco::StatusOutcome::Failure("shit");
+    };
+
+    auto passData = []() -> ecco::OutcomeData<int> {
+        return ecco::OutcomeData<int>::Success(42);
+    };
+    auto failData = []() -> ecco::OutcomeData<int> {
+        return ecco::OutcomeData<int>::Failure("fuck");
+    };
+
+    auto passTest = pass();
+    passTest.Print();
+    auto failTest = fail();
+    failTest.Print();
+    auto passDataTest = passData();
+    auto failDataTest = failData();
+
 
 }
