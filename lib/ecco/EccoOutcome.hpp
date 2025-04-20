@@ -152,6 +152,35 @@ using OutcomeData = EccoOutcome<T>;
     } while (false)                                                     \
 
 
+//By making these macros lambdas we can actually make them assignable and return them
+
+//This macro [commented below] wouldnt let us do auto x = fail("asdfe");
+//It also wouldnt let us do return (val ? fail("bad") : StatusOutcome::Success)
+
+/**
+ * #define fail(msg)
+ * do {
+ * StatusOutcome s = StatusOutcome::Failure(msg);
+ * s.AddTrace(__FILE__>....);
+ * return s;
+ * } while (false)
+ */
+
+#define OUTCOME_FAILURE(msg)                         \
+    ([]() {                                          \
+        auto o = ecco::StatusOutcome::Failure(msg);  \
+        o.AddTrace(__FILE__, __LINE__, __func__);   \
+        return o;                                    \
+    })()
+
+#define OUTCOME_FAILURE_T(Type, msg)                    \
+    ([]() {                                             \
+        auto o = ecco::OutcomeData<Type>::Failure(msg); \
+        o.AddTrace(__FILE__, __LINE__, __func__);       \
+        return o;                                       \
+    })()
+
+
 } // namespace ecco
 
 #endif

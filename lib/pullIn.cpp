@@ -208,14 +208,14 @@ void TestOutcome() {
         return ecco::StatusOutcome::Success();
     };
     auto fail = []() -> ecco::StatusOutcome {
-        return ecco::StatusOutcome::Failure("shit");
+        return OUTCOME_FAILURE("shit");
     };
 
     auto passData = []() -> ecco::OutcomeData<int> {
         return ecco::OutcomeData<int>::Success(420);
     };
     auto failData = []() -> ecco::OutcomeData<int> {
-        return ecco::OutcomeData<int>::Failure("fuck");
+       return OUTCOME_FAILURE_T(int, "fuck");
     };
 
     //& so we get fail()
@@ -257,5 +257,8 @@ void TestOutcome() {
     //Todo function names aren't coming up im getting "  "(:0) for failures?
     //fucking start moving everything into using this and see if i have issues
     //start with the GLBuffers class since I'm working on that now
+
+    //actually fuck EccoFailure wont provide a stack frame only RETURN_ON_FAIL will..
+    //So i need a failure macro
 
 }

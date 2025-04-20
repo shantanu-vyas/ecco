@@ -4,8 +4,21 @@
 #include <GL/gl.h>
 #include <GL/glew.h>
 
+#include "../ecco/EccoOutcome.hpp"
+
 namespace ecco {
 namespace OpenGL {
+
+#define RETURN_ON_GL_FAIL(func)                                         \
+  do {                                                                  \
+  while(glGetError() != GL_NO_ERROR) {}                                 \
+  func;                                                                 \
+  GLenum err = glGetError();                                            \
+  if (err != GL_NO_ERROR) {                                             \
+    return ecco::StatusOutcome::Failure(std::string("GLError: " + err)); \
+  }                                                                     \
+  } while (false)
+
 
 static GLuint GetCurrentBoundVAO() {
   GLint vao = 0;
