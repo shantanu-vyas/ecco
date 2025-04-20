@@ -59,8 +59,8 @@ void TestOutcome();
 int main()
 {
     TestOutcome();
-    exit(0);
     TestGLBuffers();
+    exit(0);
     // std::shared_ptr<ecco::EccoManager<ecco::EccoProduct>> manager = ecco::EccoManager<ecco::EccoProduct>::GetInstance();
 
     m_fboManager = ecco::OpenGL::FrameBufferManager::GetInstance();
@@ -254,5 +254,8 @@ void TestOutcome() {
     auto failMacroData = failMacroDataTest();
     failMacroData.Print();
 
+    //Todo function names aren't coming up im getting "  "(:0) for failures?
+    //fucking start moving everything into using this and see if i have issues
+    //start with the GLBuffers class since I'm working on that now
 
 }

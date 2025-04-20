@@ -2,6 +2,7 @@
 #include "GLUtils.hpp"
 
 #include "../utils/assertMacros.hpp"
+#include "ecco/EccoOutcome.hpp"
 #include "glWrappers/Attachment.hpp"
 
 #include <algorithm>
@@ -9,6 +10,7 @@
 #include <stdexcept>
 
 using namespace ecco::OpenGL;
+using ecco::StatusOutcome;
 
 BaseGLBuffer::BaseGLBuffer() :
     m_isGenerated(false),
@@ -27,68 +29,75 @@ VAO::VAO() :
         m_attachments.emplace(static_cast<VBOSpecifier>(i), std::vector<std::shared_ptr<VAOSubBufferBase>>{});
 }
 VAO::~VAO() {}
-bool VAO::GenerateBuffer() {
+
+ecco::StatusOutcome VAO::GenerateBuffer() {
     ecco_assert(!m_isGenerated, "GLBuffers::VAO::GenerateBuffer buffer currently exists can not regenerate without deleting");
+
+    //gl code to make it
     m_isGenerated = true;
-    return true;
+    return StatusOutcome::Success();
 }
-bool VAO::DeleteBuffer() {
+ecco::StatusOutcome VAO::DeleteBuffer() {
     if (!m_isGenerated)
-        return false;
+        return StatusOutcome::Failure("Noncritical, no buffer to delete");
     for (const auto &kv : m_attachedAttachments)
         ecco_assert(!kv.second.m_isAttached, "GLBuffers::VAO::DeleteBuffer can not delete VAO with attached attachments, remove attachments");
     if (m_isBound)
-        UnbindBuffer();
+        RETURN_ON_FAIL(UnbindBuffer());
+
+    //attempt to delete return on fail if delete fails
+
     m_vaoHandle = 0;
     m_isGenerated = false;
-    return true;
+    return StatusOutcome::Success();
 }
-bool VAO::BindBuffer() {
+ecco::StatusOutcome VAO::BindBuffer() {
     ecco_assert(m_isGenerated, "GLBuffers::VAO::BindBuffer buffer is not generated");
     m_isBound = true;
-    return true;
+    return StatusOutcome::Success();
+
 }
-bool VAO::UnbindBuffer() {
+ecco::StatusOutcome VAO::UnbindBuffer() {
     ecco_assert(m_isGenerated, "GLBuffers::VAO::UnindBuffer buffer is not generated");
     m_isBound = false;
-    return true;
+    return StatusOutcome::Success();
 }
 
 
 template <VBOSpecifier S>
-bool VAO::SetAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment) {
+ecco::StatusOutcome VAO::SetAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment) {
     auto &vec = m_attachments.at(S);
     if (std::find(vec.begin(), vec.end(), attachment) == vec.end()) {
         vec.emplace_back(attachment);
-        return true;
+        return StatusOutcome::Success();
     }
-    return false;
+    return StatusOutcome::Failure("Attachment exists, cannot reset it");
 }
 
 template <VBOSpecifier S>
-bool VAO::RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment) {
+ecco::StatusOutcome VAO::RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment) {
     auto &vec = m_attachments.at(S);
     auto it = std::find(vec.begin(), vec.end(), attachment);
     if (it != vec.end()) {
         vec.erase(it);
-        return true;
+        return StatusOutcome::Success();
     }
-    return false;
+    return StatusOutcome::Failure("Cannot remove attachment, was never added");
 }
 
 template<VBOSpecifier S>
-bool VAO::Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace) {
+ecco::StatusOutcome VAO::Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace) {
     auto &vec = m_attachments.at(S);
     ecco_assert(std::find(vec.begin(), vec.end(), attachment) != vec.end(), "VAO::Attach - Can not attach non added attachment");
 
-    auto set_slot = [&](int slot) {
+    auto set_slot = [&](int slot) -> StatusOutcome {
         auto &cur = m_attachedAttachments[slot];
         if (cur.m_isAttached && !replace)
-            return false;
+            return StatusOutcome::Failure("Attachment is already attached");
         cur.m_isAttached = true;
         cur.m_attachment = attachment;
         cur.m_attachment->SetAttachmentSlot(slot);
-        return true;
+        return StatusOutcome::Success();
     };
 
     if (S == VBOSpecifier::VertexInfo)
@@ -109,17 +118,17 @@ bool VAO::Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace) {
 
 
 template<VBOSpecifier S>
-bool VAO::Detach(std::shared_ptr<VAOSubBuffer<S>> attachment) {
+ecco::StatusOutcome VAO::Detach(std::shared_ptr<VAOSubBuffer<S>> attachment) {
     int slot = attachment->GetAttachmentSlot();
     if (slot < 0)
-        return false;
+        return StatusOutcome::Failure("Attachment is not attached to anything");
     auto it = m_attachedAttachments.find(slot);
     if (it == m_attachedAttachments.end() || it->second.m_attachment != attachment)
-        return false;
+        return StatusOutcome::Failure("Attachement is not attached to this vao");
     it->second.m_isAttached = false;
     it->second.m_attachment = nullptr;
     attachment->SetAttachmentSlot(-1);
-    return true;
+    return StatusOutcome::Success();
 }
 
 void VAO::PrintAllAttachments() const {
@@ -149,37 +158,52 @@ VAOSubBuffer<S>::~VAOSubBuffer() {}
 template<VBOSpecifier S>
 VBOSpecifier VAOSubBuffer<S>::GetVBOType() { return S; }
 
+//this string creation everytime is bad.. constexpr the string maybe?
 template<VBOSpecifier S>
-const char* VAOSubBuffer<S>::GetVBOName() const { return VBOType<S>::m_vboName; };
+std::string VAOSubBuffer<S>::GetVBOName() const { return std::string(VBOType<S>::m_vboName); };
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::GenerateBuffer() { return true; }
+ecco::StatusOutcome VAOSubBuffer<S>::GenerateBuffer() {
+    return StatusOutcome::Success();
+}
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::DeleteBuffer() { return true; }
+ecco::StatusOutcome VAOSubBuffer<S>::DeleteBuffer() {
+    return StatusOutcome::Success();
+}
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::BindBuffer() { return true; }
+ecco::StatusOutcome VAOSubBuffer<S>::BindBuffer() {
+    return StatusOutcome::Success();
+}
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::UnbindBuffer() { return true; }
+ecco::StatusOutcome VAOSubBuffer<S>::UnbindBuffer() {
+    return StatusOutcome::Success();
+}
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::SetData(const std::vector<DataType> &data, bool saveLocal) {
+ecco::StatusOutcome VAOSubBuffer<S>::SetData(const std::vector<DataType> &data, bool saveLocal) {
     auto vao = m_attachedVAO.lock();
     if (!vao)
-        return false;
-    vao->BindBuffer();
-    this->BindBuffer();
+        return StatusOutcome::Failure("VBO isn't attached to a vao, is this okay to set data? saying no for now but need to check gl spec");
+
+    RETURN_ON_FAIL(vao->BindBuffer());
+    RETURN_ON_FAIL(this->BindBuffer());
     m_numElements = data.size();
     if (saveLocal) { m_localSaved = true; m_data = data; }
-    this->UnbindBuffer();
-    vao->UnbindBuffer();
-    return true;
+    RETURN_ON_FAIL(this->UnbindBuffer());
+    RETURN_ON_FAIL(vao->UnbindBuffer());
+    return StatusOutcome::Success();
 }
 
 template<VBOSpecifier S>
 void VAOSubBuffer<S>::ClearCache() { m_localSaved = false; m_data.clear(); }
 
 template<VBOSpecifier S>
-bool VAOSubBuffer<S>::SetVAO(std::shared_ptr<VAO> vao) { m_attachedVAO = vao; return true; }
+ecco::StatusOutcome VAOSubBuffer<S>::SetVAO(std::shared_ptr<VAO> vao) {
+    if (m_attachedVAO.lock() != nullptr)
+        return StatusOutcome::Failure("Buffer is already bound to a vao");
+    m_attachedVAO = vao;
+    return StatusOutcome::Success();
+}

@@ -4,9 +4,11 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <memory>
+#include "../ecco/EccoOutcome.hpp"
+
 #include <glm/glm.hpp>
-#include <any>
+
+#include <memory>
 #include <vector>
 #include <map>
 
@@ -194,10 +196,10 @@ public:
     BaseGLBuffer& operator=(const BaseGLBuffer&) = delete;
     virtual ~BaseGLBuffer() = default;
 
-    virtual bool GenerateBuffer() = 0;
-    virtual bool DeleteBuffer() = 0;
-    virtual bool BindBuffer() = 0;
-    virtual bool UnbindBuffer() = 0;
+    virtual ecco::StatusOutcome GenerateBuffer() = 0;
+    virtual ecco::StatusOutcome DeleteBuffer() = 0;
+    virtual ecco::StatusOutcome BindBuffer() = 0;
+    virtual ecco::StatusOutcome UnbindBuffer() = 0;
 
 protected:
     bool m_isGenerated = false;
@@ -219,24 +221,24 @@ public:
     VAO();
     virtual ~VAO();
 
-    bool GenerateBuffer() override;
-    bool DeleteBuffer() override;
-    bool BindBuffer() override;
-    bool UnbindBuffer() override;
+    ecco::StatusOutcome GenerateBuffer() override;
+    ecco::StatusOutcome DeleteBuffer() override;
+    ecco::StatusOutcome BindBuffer() override;
+    ecco::StatusOutcome UnbindBuffer() override;
 
     template <VBOSpecifier S>
-    bool SetAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment);
+    ecco::StatusOutcome SetAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment);
 
     template <VBOSpecifier S>
-    bool RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment);
+    ecco::StatusOutcome RemoveAttachment(std::shared_ptr<VAOSubBuffer<S>> attachment);
 
     //ex if vertex vbo 1 is attached and we try to attach 2 it will unattach 1 then attach 2 and return true if replace is true
     //These functions are specifically setting the vertexattribptr
     //0 - Vertex, 1 - Normal, 2 - Texture Coord, 3-N anything else
     template<VBOSpecifier S>
-    bool Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace = true);
+    ecco::StatusOutcome Attach(std::shared_ptr<VAOSubBuffer<S>> attachment, bool replace = true);
     template<VBOSpecifier S>
-    bool Detach(std::shared_ptr<VAOSubBuffer<S>> attachment);
+    ecco::StatusOutcome Detach(std::shared_ptr<VAOSubBuffer<S>> attachment);
 
     void PrintAllAttachments() const;
     void PrintAttachedAttachments() const;
@@ -260,7 +262,7 @@ public:
     VAOSubBufferBase() : BaseGLBuffer() {};
     virtual ~VAOSubBufferBase() = default;
     virtual VBOSpecifier GetVBOType() = 0;
-    virtual const char* GetVBOName() const = 0;
+    virtual std::string GetVBOName() const = 0;
     void SetAttachmentSlot(int slot) { m_slotID = slot; };
     int GetAttachmentSlot() { return m_slotID; };
 protected:
@@ -276,17 +278,17 @@ public:
     VAOSubBuffer();
     virtual ~VAOSubBuffer();
     virtual VBOSpecifier GetVBOType() override;
-    const char* GetVBOName() const override;
+    std::string GetVBOName() const override;
 
-    bool GenerateBuffer() override;
-    bool DeleteBuffer() override;
-    bool BindBuffer() override;
-    bool UnbindBuffer() override;
-    bool SetData(const std::vector<DataType>& data, bool saveLocal = false);
+    ecco::StatusOutcome GenerateBuffer() override;
+    ecco::StatusOutcome DeleteBuffer() override;
+    ecco::StatusOutcome BindBuffer() override;
+    ecco::StatusOutcome UnbindBuffer() override;
+    ecco::StatusOutcome SetData(const std::vector<DataType>& data, bool saveLocal = false);
     void ClearCache();
 
 protected:
-    bool SetVAO(std::shared_ptr<VAO> vao);
+    ecco::StatusOutcome SetVAO(std::shared_ptr<VAO> vao);
 
 private:
     std::weak_ptr<VAO> m_attachedVAO;
