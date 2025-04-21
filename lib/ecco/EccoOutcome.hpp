@@ -53,19 +53,16 @@ public:
         const std::vector<TraceFrame>& Trace() const { return m_stackTrace; };
 
         void Print(std::ostream& os = std::cout) const {
-        if (IsSuccess()) {
-            if constexpr (!std::is_same_v<T, void>) {
+            if (IsSuccess()) {
                 os << "[Success] Value: " << Value() << std::endl;;
-            } else {
-                os << "[Success] " << std::endl;;
+                return;
             }
-            return;
-        }
+
 
         os << "[Failure]" << std::endl;;
-        for (size_t i = 0; i < m_stackTrace.size(); ++i) {
+        for (int i = m_stackTrace.size()-1; i >= 0; --i) {
             const auto& frame = m_stackTrace[i];
-            std::string indent(i * 2, ' ');
+            std::string indent((m_stackTrace.size() - i) * 2, ' ');
             os << indent << "-> at ";
             os << frame.m_functionName;
             os << " (" << frame.m_file << ":" << frame.m_lineNumber << ")";
@@ -81,7 +78,6 @@ private:
         explicit EccoOutcome(T&& v) : m_status{OutcomeStatus::Success}, m_value{std::move(v)} {};
         //Fail constructor
         explicit EccoOutcome(std::string_view msg) : m_status{OutcomeStatus::Failure} {
-            m_stackTrace.emplace_back("",0,"",msg);
         };
 
         OutcomeStatus m_status;
@@ -113,9 +109,9 @@ public:
         }
 
         os << "[Failure] " << std::endl;;
-        for (size_t i = 0; i < m_stackTrace.size(); ++i) {
+        for (int i = m_stackTrace.size()-1; i >= 0; --i) {
             const auto& frame = m_stackTrace[i];
-            std::string indent(i * 2, ' ');
+            std::string indent((m_stackTrace.size() - i) * 2, ' ');
             os << indent << "-> at ";
             os << frame.m_functionName;
             os << " (" << frame.m_file << ":" << frame.m_lineNumber << ")";
@@ -128,8 +124,7 @@ private:
     explicit EccoOutcome(bool ok, std::string_view msg = {}) :
         m_status{ ok ? OutcomeStatus::Success : OutcomeStatus::Failure }
     {
-        if (!ok)
-            m_stackTrace.emplace_back("",0,"",msg);
+
     }
 
     OutcomeStatus               m_status;
@@ -180,6 +175,12 @@ using OutcomeData = EccoOutcome<T>;
         return o;                                       \
     })()
 
+#define CHECK_AND_TRACE(outcomeExpr)                                \
+    ([&]() {                                                         \
+        auto _o = (outcomeExpr);                                     \
+        if (!_o) _o.AddTrace(__FILE__, __LINE__, __func__);          \
+        return _o;                                                   \
+    })()
 
 } // namespace ecco
 

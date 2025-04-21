@@ -202,6 +202,10 @@ void TestGLBuffers() {
 
 }
 
+ecco::StatusOutcome TestFailFunction() {
+    return StatusOutcome::Failure("Testing function name failure");
+}
+
 void TestOutcome() {
     std::cout << "running" << std::endl;
     auto pass = []() -> ecco::StatusOutcome {
@@ -230,35 +234,33 @@ void TestOutcome() {
 
 };
 
-    std::cout << "pass" << std::endl;
-    auto passTest = pass();
+    std::cout << "\nTesting Pass" << std::endl;
+    auto passTest = CHECK_AND_TRACE(pass());
     passTest.Print();
 
-    std::cout << "fail" << std::endl;
-    auto failTest = fail();
+    std::cout << "\nTesting Fail" << std::endl;
+    auto failTest = CHECK_AND_TRACE(fail());
     failTest.Print();
 
-    std::cout << "pass data" << std::endl;
-    auto passDataTest = passData();
+    std::cout << "\nTesting Pass Data" << std::endl;
+    auto passDataTest = CHECK_AND_TRACE(passData());
     passDataTest.Print();
 
-    std::cout << "fail data" << std::endl;
-    auto failDataTest = failData();
+    std::cout << "\nTesting Fail Data" << std::endl;
+    auto failDataTest = CHECK_AND_TRACE(failData());
     failDataTest.Print();
 
-    std::cout << "fail macro " << std::endl;
-    auto failMacro = failMacroTest();
+    std::cout << "\nTesting ReturnOnFailMacro" << std::endl;
+    auto failMacro = CHECK_AND_TRACE(failMacroTest());
     failMacro.Print();
 
-    std::cout << "fail macro data" << std::endl;
-    auto failMacroData = failMacroDataTest();
+    std::cout << "\nTesting ReturnOnFailMacro Data" << std::endl;
+    auto failMacroData = CHECK_AND_TRACE(failMacroDataTest());
     failMacroData.Print();
 
-    //Todo function names aren't coming up im getting "  "(:0) for failures?
-    //fucking start moving everything into using this and see if i have issues
-    //start with the GLBuffers class since I'm working on that now
+    std::cout << "\nTesting Fail Func (not lambda)" << std::endl;
+    auto functionNameTest = CHECK_AND_TRACE(TestFailFunction());
+    functionNameTest.Print();
 
-    //actually fuck EccoFailure wont provide a stack frame only RETURN_ON_FAIL will..
-    //So i need a failure macro
-
+    std::cout << "\n" << std::endl;
 }
