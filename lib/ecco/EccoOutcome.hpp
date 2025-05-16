@@ -35,7 +35,10 @@ public:
         //just std::move(msg) like i do elsewhere
 
         //Status Getters
-        bool IsSuccess() const { return m_status == OutcomeStatus::Success; }
+        bool IsSuccess() const {
+            m_checkedValue = true;
+            return m_status == OutcomeStatus::Success;
+        }
         bool IsFailure() const { return !IsSuccess(); };
         //this is cool
         explicit operator bool() const { return IsSuccess(); };
@@ -43,7 +46,17 @@ public:
 
         //Value getters
         T& Value() { return *m_value; };
-        const T& Value() const { return *m_value; };
+        const T& Value() const {
+
+            if (!m_checkedValue) {
+                throw std::logic_error("EccoOutcome<T>::Value() : Must check success before accessing value");
+            }
+            if (EccoOutcome::Success) {
+                throw std::logic_error("EccoOutcome<T>::Value() : Cannot grab value of failed outcome");
+            }
+
+            return *m_value;
+        };
         //Maybe we want to return the optional itself?
         const std::optional<T>& Maybe() const { return m_value; };
 
@@ -75,14 +88,16 @@ public:
 private:
         //These aren't called directrly Success/Failure static funcs will call these
         //Success constructor
-        explicit EccoOutcome(T&& v) : m_status{OutcomeStatus::Success}, m_value{std::move(v)} {};
+        explicit EccoOutcome(T&& v) : m_status{OutcomeStatus::Success}, m_value{std::move(v)}, m_checkedValue(false) {};
         //Fail constructor
-        explicit EccoOutcome(std::string_view msg) : m_status{OutcomeStatus::Failure} {
+        explicit EccoOutcome(std::string_view msg) : m_status{OutcomeStatus::Failure}, m_checkedValue(false) {
         };
 
         OutcomeStatus m_status;
         std::optional<T> m_value;
         std::vector<TraceFrame> m_stackTrace;
+        mutable bool m_checkedValue; //We make this mutable since we want bool() to be const but IsSuccess is technically non const
+
 };
 
 //annoying but optional cant take void so for the return status only type Outcome<void> we have to make an
@@ -152,6 +167,7 @@ using OutcomeData = EccoOutcome<T>;
 //This macro [commented below] wouldnt let us do auto x = fail("asdfe");
 //It also wouldnt let us do return (val ? fail("bad") : StatusOutcome::Success)
 
+
 /**
  * #define fail(msg)
  * do {
@@ -160,6 +176,10 @@ using OutcomeData = EccoOutcome<T>;
  * return s;
  * } while (false)
  */
+
+
+
+    
 
 #define OUTCOME_FAILURE(msg)                         \
     ([]() {                                          \
@@ -183,5 +203,18 @@ using OutcomeData = EccoOutcome<T>;
     })()
 
 } // namespace ecco
+
+
+
+Outcome foo() {
+    Outcome x = try1();
+    Outcome y = try2();
+    Outcome z = try3();
+
+if (!x && !y && !z) {
+    RETURN_ON_FAIL("bad");
+}
+}
+
 
 #endif
