@@ -4,6 +4,9 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include "../sceneModel/Model.hpp"
+#include "GLTypes.hpp"
+
+
 #include <memory>
 
 
@@ -71,86 +74,42 @@ namespace ecco
     {
         class VAOModel : public ecco::EccoObject
         {
+
             public:
                 VAOModel() = delete;
                 VAOModel(VAOModel&) = delete;
                 VAOModel(const VAOModel&) = delete;
 
-                VAOModel(const std::shared_ptr<ecco::Model::Model>& model) :
-                    ecco::EccoObject(model->GetName() + "-VBOModel"),
-                    m_model(model),
-                    m_hasInstancing(false),
-                    m_hasPerVertexColors(false),
-                    m_hasTexCoords(false) {
-                    //Set up base model VBO
-                }
+                VAOModel(const std::shared_ptr<ecco::Model::Model>& model);
 
                 VAOModel(const std::shared_ptr<ecco::Model::Model>& model,
-                         const ecco::Model::InstancePositions& instancingPositions) :
-                    VAOModel(model) {
-
-                    m_hasInstancing = true;
-                    //Set up instancing VBO
-                }
+                         const ecco::Model::InstancePositions& instancingPositions);
 
 
                 VAOModel(const std::shared_ptr<ecco::Model::Model>& model,
-                         const ecco::Model::PerVertexColors& perVertexColors) :
-                    VAOModel(model) {
-
-                    m_hasPerVertexColors = true;
-                    //Set up per-vertex color VBO
-                }
-
-                VAOModel(const std::shared_ptr<ecco::Model::Model>& model,
-                         const ecco::Model::InstancePositions& instancingPositions,
-                         const ecco::Model::PerVertexColors& perVertexColors) :
-                    VAOModel(model, instancingPositions) {
-
-                    m_hasPerVertexColors = true;
-                    //Set up per-vertex color VBO
-                }
-
-
-                VAOModel(const std::shared_ptr<ecco::Model::Model>& model,
-                         const ecco::Model::TexCoords& uvCoords) :
-                    VAOModel(model) {
-
-                    m_hasTexCoords = true;
-                    //Set up UV coords VBO
-                }
+                         const ecco::Model::PerVertexColors& perVertexColors);
 
 
                 VAOModel(const std::shared_ptr<ecco::Model::Model>& model,
                          const ecco::Model::InstancePositions& instancingPositions,
-                         const ecco::Model::TexCoords& uvCoords) :
-                    VAOModel(model, instancingPositions) {
+                         const ecco::Model::PerVertexColors& perVertexColors);
 
-                    m_hasTexCoords = true;
-                    //Set up UV coords VBO
-                }
+                VAOModel(const std::shared_ptr<ecco::Model::Model>& model,
+                         const ecco::Model::TexCoords& uvCoords);
 
+
+                VAOModel(const std::shared_ptr<ecco::Model::Model>& model,
+                         const ecco::Model::InstancePositions& instancingPositions,
+                         const ecco::Model::TexCoords& uvCoords);
 
                 VAOModel(const std::shared_ptr<ecco::Model::Model>& model,
                          const ecco::Model::PerVertexColors& perVertexColors,
-                         const ecco::Model::TexCoords& uvCoords) :
-                    VAOModel(model, perVertexColors) {
-
-                    m_hasTexCoords = true;
-                    //Set up UV coords VBO
-                }
-
+                         const ecco::Model::TexCoords& uvCoords);
 
                 VAOModel(const std::shared_ptr<ecco::Model::Model>& model,
                          const ecco::Model::InstancePositions& instancingPositions,
                          const ecco::Model::PerVertexColors& perVertexColors,
-                         const ecco::Model::TexCoords& uvCoords) :
-                    VAOModel(model, instancingPositions, perVertexColors) {
-
-                    m_hasTexCoords = true;
-                    //Set up UV coords VBO
-                }
-
+                         const ecco::Model::TexCoords& uvCoords);
 
 
                 void EnableInstancing(); //assert if m_hasInstancing is false
@@ -163,31 +122,41 @@ namespace ecco
                 bool GetHasPerVertexColors() const;
                 bool GetIsPerVertexColors() const;
 
-                void CreateVAO(std::shared_ptr<Model::Model> model);
-
             private:
-                GLuint m_vao, m_vboVerts, m_vboNorms, m_eboTriangles, m_vboTexCoords;
+                //Creates VAO, m_vboVerts, m_vboNormsl, m_eboTriangles
+                void CreateVAOWithGeometry(std::shared_ptr<Model::Model> model);
+                void CreateInstancingVBO(const ecco::Model::InstancePositions& instancePositions);
+                void CreatePerVertexColorVBO(const ecco::Model::PerVertexColors& perVertexColors);
+                void CreatePerVertexTexCoords(const ecco::Model::PerVertexColors& perVertexTexCoords);
+
+                //Geometry information
+                GLVAO m_vao;
+                GLVBOVertex m_vboVerts;
+                GLVBONormal m_vboNorms;
+                GLEBOTriangle m_eboTriangles;
+
+
                 int m_numVertices, m_numTriangles;
 
                 bool m_hasInstancing;
                 bool m_isInstancing;
-                GLuint m_vaoInstancedPositions;
+                GLVBOInstancePosition m_vboInstancedPositions;
 
                 bool m_hasPerVertexColors;
                 bool m_isPerVertexColors;
-                GLuint m_perVertexColors;
+                GLVBOPerVertexColor m_perVertexColors;
 
                 bool m_hasTexCoords;
                 bool m_isUsingTexCoords;
-                GLuint m_texCoords;
+                GLVBOTexCoord m_vboTexCoords;
 
                 //Model owns shared ptr to this object
                 std::weak_ptr<ecco::Model::Model> m_model;
                 std::weak_ptr<ecco::Material::Material> m_material; //Get material handle here
 
 
-                //texture link
-
+                //do this later... iirc you can't just call glBufferData every frame this will create new memory
+                //you need to call glsubbufferdata or something to update when using dynamic vbo updates
                 bool m_hasFrequentUpdates; //Set to true if this object is updated every frame~ this will be to set dynamic draw in gl
 
         };

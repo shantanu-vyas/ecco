@@ -206,6 +206,13 @@ ecco::StatusOutcome TestFailFunction() {
     return StatusOutcome::Failure("Testing function name failure");
 }
 
+
+ecco::OutcomeData<uint32_t> test() {
+    //dump this into a return macro
+    // using ReturnType = decltype(test());
+    // return ReturnType::Success(420);
+}
+
 void TestOutcome() {
     std::cout << "running" << std::endl;
     auto pass = []() -> ecco::StatusOutcome {
@@ -216,7 +223,7 @@ void TestOutcome() {
     };
 
     auto passData = []() -> ecco::OutcomeData<int> {
-        return ecco::OutcomeData<int>::Success(420);
+    return ecco::OutcomeData<int>::Success(420);
     };
     auto failData = []() -> ecco::OutcomeData<int> {
        return OUTCOME_FAILURE_T(int, "fuck");

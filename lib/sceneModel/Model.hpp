@@ -5,6 +5,7 @@
 #include "../materials/Material.hpp"
 #include "../utils/GLMUtils.hpp"
 #include "../utils/assertMacros.hpp"
+#include "../utils/BBox.hpp"
 #include <algorithm> // std::sort, std::includes
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
@@ -47,11 +48,29 @@
 namespace ecco {
     namespace Model {
 
-        typedef std::vector<glm::dvec3> VertexList;
-        typedef std::vector<glm::dvec3> InstancePositions;
-        typedef std::vector<glm::dvec4> PerVertexColors;
-        typedef std::vector<glm::ivec3> TriangleList;
-        typedef std::vector<glm::dvec2> TexCoords;
+        enum InternalData {
+        VerticesID,
+        TrianglesID,
+        NormalsID,
+        PerVertexColorsID,
+        InstancingPositionsID,
+        TexCoordsID
+        };
+        //Used to propogate changes to the vao model to update the gl internals
+        using InternalDataCB = std::function<void(InternalData)>;
+
+
+        using VertexList = std::vector<glm::dvec3>;
+        using NormalList = std::vector<glm::dvec3>;
+        using TriangleList = std::vector<glm::ivec3>;
+
+        using InstancePositions = std::vector<glm::dvec3>;
+        using PerVertexColors = std::vector<glm::dvec4>;
+        using TexCoords = std::vector<glm::dvec2>;
+
+        template <typename T>
+        using PerVertexData = std::vector<T>;
+
 
         static bool isVertexListSubset(const VertexList& a, const VertexList& b) {
 
@@ -86,16 +105,54 @@ namespace ecco {
                 Model(std::string name);
                 ~Model() = default;
                 void LoadModel(std::string filename);
-                void SetTexCoords(const std::vector<glm::vec2> &coords);
+
+                //These functions will set the geometry and compute the bbox, (also first func will compute normals if they are not precomputed)
+                //These need to trigger callbacks into the vao model
+                void SetGeometry(const VertexList& vertexList, const TriangleList& triangleList); //computes normals
+                void SetGeometry(const VertexList& vertexList, const TriangleList& triangleList, const NormalList& normalList);
+                void SetInstancePositions(const InstancePositions& positions) { m_instancePositions = positions; };
+                void SetPerVertexColors(const PerVertexColors& perVertexColors) { m_perVertexColors = perVertexColors; };
+                void SetPerVertexTexCoords(const TexCoords texCoords) { m_texCoords = texCoords; };
+
+
                 VertexList GetVertices() const { return m_vertices; };
+                NormalList GetNormals() const { return m_normals; };
                 TriangleList GetTriangles() const { return m_triangles; };
+                InstancePositions GetInstancePositions() const { return m_instancePositions; };
+                PerVertexColors GetPerVertexColors() const { return m_perVertexColors; };
+                TexCoords GetPerVertexTexCoords() const { return m_texCoords; };
+
+                BBox BBOX() const {
+                    return m_bbox;
+                }
+
                 // idk what should be in here figure it out.
                 // Different loaders?
+
             private:
+
+                void computeNormals();
+
                 int m_numVertices;
                 int m_numTriangles;
+
                 VertexList m_vertices;
+                NormalList m_normals;
                 TriangleList m_triangles;
+                InstancePositions m_instancePositions;
+                PerVertexColors m_perVertexColors;
+                TexCoords m_texCoords;
+
+                //ugh i do not like this, one model could have multiple vaos we don't define a strict 1:1 mapping
+                //in which case if this class updates internal values we need to propgate multiple vaos to update
+                //do we want to make this a vector? k
+                //rather i think i want the VAOModel to have the callback member which binds to a function defined here called updateinternals
+                //which looks at which internals got updated and propogates that change then this calls some internal functino in vaomodel
+                //think about this later... but TODO
+                InternalDataCB m_vaoUpdateCallback;
+
+                BBox m_bbox;
+
         };
 
         class TextureMap : ecco::EccoObject {
@@ -207,6 +264,10 @@ namespace ecco {
                     return m_textureMap;
                 }
 
+                BBox BBOX() const {
+                    return m_bbox;
+                }
+
             private:
                 //having this return bool instead of asserting directly so assert gives us line number for which constructor
                 bool areVertexBoundsValid() {
@@ -221,6 +282,8 @@ namespace ecco {
                 size_t m_vertexSize;
                 std::shared_ptr<ecco::Material::Material> m_material;
                 std::shared_ptr<ecco::Model::TextureMap> m_textureMap;
+                BBox m_bbox;
+
         };
 
     } // namespace Model
